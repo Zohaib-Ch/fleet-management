@@ -95,7 +95,7 @@ const generateVehicles = () => {
         engineLoad: srnd(20, 75),
         co2: (srnd(100, 200) / 100).toFixed(2),
       },
-      odometer: srnd(5000, 150000),
+      odometer: srnd(500, 150),
       nextService: `${srnd(500, 5000)} km`,
       alerts: status === 'Maintenance' ? 1 : 0
     })
