@@ -79,6 +79,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { id: 'Compliance', label: 'Compliance', icon: ShieldCheck, path: '/compliance', permission: 'all' },
     { id: 'Maintenance', label: 'Maintenance', icon: Wrench, path: '/maintenance', permission: 'maintenance_access' },
     { id: 'Reports', label: 'Reports', icon: BarChart3, path: '/reports', permission: 'all' },
+    { id: 'Settings', label: 'Settings', icon: Settings, path: '/settings', permission: 'all' },
   ]
 
   return (

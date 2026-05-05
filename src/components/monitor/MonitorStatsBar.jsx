@@ -64,7 +64,7 @@ const MonitorStatsBar = ({ stats, showConfig, onToggleConfig, onToggleStat }) =>
   const visible = stats.filter(s => s.visible)
 
   return (
-    <div className="relative flex items-center gap-4 py-2 overflow-hidden">
+    <div className="relative flex items-center gap-4 py-2">
       {/* Cinematic Stats Container */}
       <div className="flex-1 flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
         <AnimatePresence mode="popLayout">
