@@ -11,12 +11,32 @@ const STATUS_HEX = {
   Maintenance: '#EF4444',
 }
 
-const createMarkerIcon = (status, isFocused, isSelected) => {
-  const color   = STATUS_HEX[status] || '#94A3B8'
-  const ring    = isSelected ? `box-shadow:0 0 0 3px ${color}40,0 0 0 6px ${color}20;` : ''
-  const scale   = isFocused || isSelected ? 'transform:scale(1.3);' : ''
-  const bg      = isSelected ? color : '#ffffff'
-  const stroke  = isSelected ? '#ffffff' : color
+const createMarkerIcon = (status, isFocused, isSelected, type) => {
+  const color = STATUS_HEX[status] || '#94A3B8'
+  const ring = isSelected ? `box-shadow:0 0 0 3px ${color}40,0 0 0 6px ${color}20;` : ''
+  const scale = isFocused || isSelected ? 'transform:scale(1.3);' : ''
+  const bg = isSelected ? color : '#ffffff'
+  const stroke = isSelected ? '#ffffff' : color
+
+  let iconPath = `
+    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+    <path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-2.39-2.93A1 1 0 0 0 18.64 11H15v7a1 1 0 0 0 1 1z"/>
+    <circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>
+  `
+
+  if (type === 'Car') {
+    iconPath = `
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2.1 11.1 2 11.4 2 11.7V16c0 .6.4 1 1 1h2"/>
+      <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+      <path d="M5 17h10"/>
+    `
+  } else if (type === 'Excavator') {
+    iconPath = `
+      <path d="M3 17h16c1.1 0 2-.9 2-2V9h-3l-1.5 5H14V4h-2v10h-2L8.5 9H5v6c0 1.1.9 2 2 2z"/>
+      <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+      <path d="M5 17h10"/>
+    `
+  }
 
   return L.divIcon({
     className: '',
@@ -28,9 +48,7 @@ const createMarkerIcon = (status, isFocused, isSelected) => {
           box-shadow:0 2px 8px rgba(0,0,0,0.15);${ring}
         ">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
-            <path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-2.39-2.93A1 1 0 0 0 18.64 11H15v7a1 1 0 0 0 1 1z"/>
-            <circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>
+            ${iconPath}
           </svg>
         </div>
         <div style="
@@ -110,7 +128,7 @@ const MonitorMap = ({ vehicles, focusedVehicle, selectedVehicle, onSingleClick, 
       {vehicles.slice(0, 120).map(v => {
         const isFocused  = focusedVehicle?.id  === v.id
         const isSelected = selectedVehicle?.id === v.id
-        const icon = createMarkerIcon(v.status, isFocused, isSelected)
+        const icon = createMarkerIcon(v.status, isFocused, isSelected, v.type)
 
         return (
           <Marker

@@ -48,6 +48,8 @@ const MetricCard = ({ label, value, trend, icon: Icon, color, delay }) => (
 
 const Dashboard = () => {
   const [activeRange, setActiveRange] = useState('30D')
+  const { settings } = useSettings()
+  const isDark = settings.theme === 'dark'
   
   const chartColors = {
     primary: '#2563eb',
@@ -55,7 +57,9 @@ const Dashboard = () => {
     success: '#10B981',
     warning: '#F59E0B',
     danger: '#EF4444',
-    neutral: '#94A3B8'
+    neutral: isDark ? '#64748B' : '#94A3B8',
+    text: isDark ? '#94A3B8' : '#64748B',
+    grid: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9'
   }
 
   return (
@@ -141,22 +145,27 @@ const Dashboard = () => {
                         <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartColors.grid} />
                     <XAxis 
                       dataKey="h" 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} 
+                      tick={{ fontSize: 10, fontWeight: 700, fill: chartColors.text }} 
                       dy={10}
                     />
                     <YAxis 
                       axisLine={false} 
                       tickLine={false} 
-                      tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} 
+                      tick={{ fontSize: 10, fontWeight: 700, fill: chartColors.text }} 
                     />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#fff', borderRadius: '1.5rem', border: 'none', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }}
-                      labelStyle={{ fontWeight: 900, marginBottom: '4px' }}
+                      contentStyle={{ 
+                        backgroundColor: isDark ? '#0F172A' : '#fff', 
+                        borderRadius: '1.5rem', 
+                        border: isDark ? '1px solid rgba(255,255,255,0.1)' : 'none', 
+                        boxShadow: '0 20px 50px rgba(0,0,0,0.1)' 
+                      }}
+                      labelStyle={{ fontWeight: 900, marginBottom: '4px', color: isDark ? '#F8FAFC' : '#1e293b' }}
                     />
                     <Area 
                       type="monotone" 
@@ -220,6 +229,9 @@ const Dashboard = () => {
                   <div className="flex-1 w-full min-h-[160px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={mockChartData.fuelWeekly.slice(0, 5)}>
+                        <XAxis 
+                          hide={true}
+                        />
                         <Bar 
                           dataKey="v" 
                           fill="#3b82f6" 

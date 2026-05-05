@@ -159,7 +159,7 @@ const UsersPage = () => {
                         <h2 className="text-2xl font-black text-white tracking-tight">{u.name}</h2>
                         <span className="text-blue-100/60 text-sm font-mono">{u.id}</span>
                       </div>
-                      <p className="text-blue-100 text-sm font-bold uppercase tracking-wider">{u.role} &nbsp;·&nbsp; {u.department}</p>
+                      <p className="text-blue-100 text-sm font-bold uppercase tracking-wider">{u.role.name} &nbsp;·&nbsp; {u.department}</p>
 
                       <div className="flex items-center gap-4 mt-3">
                         <div className="flex items-center gap-1.5 text-blue-50">

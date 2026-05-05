@@ -3,17 +3,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Search, User, Filter, ChevronDown, Check, Activity, Clock, ShieldCheck, Mail } from 'lucide-react'
 
 const ROLE_COLOR = {
-  Driver:     'text-blue-600 bg-blue-50 border-blue-100',
-  Dispatcher: 'text-purple-600 bg-purple-50 border-purple-100',
-  Manager:    'text-emerald-600 bg-emerald-50 border-emerald-100',
-  Mechanic:   'text-amber-600 bg-amber-50 border-amber-100',
+  driver:     'text-blue-600 bg-blue-50 border-blue-100',
+  dispatcher: 'text-purple-600 bg-purple-50 border-purple-100',
+  manager:    'text-emerald-600 bg-emerald-50 border-emerald-100',
+  mechanic:   'text-amber-600 bg-amber-50 border-amber-100',
+  admin:      'text-red-600 bg-red-50 border-red-100',
 }
 
 const ROLES = [
-  { id: 'Driver',     label: 'Drivers',     color: '#3B82F6' },
-  { id: 'Dispatcher', label: 'Dispatchers', color: '#8B5CF6' },
-  { id: 'Manager',    label: 'Managers',    color: '#10B981' },
-  { id: 'Mechanic',   label: 'Mechanics',   color: '#F59E0B' },
+  { id: 'driver',     label: 'Drivers',     color: '#3B82F6' },
+  { id: 'dispatcher', label: 'Dispatchers', color: '#8B5CF6' },
+  { id: 'manager',    label: 'Managers',    color: '#10B981' },
+  { id: 'mechanic',   label: 'Mechanics',   color: '#F59E0B' },
 ]
 
 const UserRow = ({ user, isSelected, onClick }) => (
@@ -55,7 +56,7 @@ const UserRow = ({ user, isSelected, onClick }) => (
         </div>
         <p className={`text-[10px] font-bold mt-0.5 flex items-center gap-1.5 ${isSelected ? 'text-blue-100' : 'text-slate-500'}`}>
           <ShieldCheck className="w-2.5 h-2.5" />
-          <span className="truncate">{user.role} · {user.department}</span>
+          <span className="truncate">{user.role.name} · {user.department}</span>
         </p>
       </div>
     </div>
@@ -82,7 +83,7 @@ const UserRow = ({ user, isSelected, onClick }) => (
 )
 
 const UserListPanel = ({ users, selectedUser, onUserSelect, searchQuery, onSearch }) => {
-  const [activeRoles, setActiveRoles] = useState(['Driver', 'Dispatcher', 'Manager', 'Mechanic'])
+  const [activeRoles, setActiveRoles] = useState(['driver', 'dispatcher', 'manager', 'mechanic'])
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const filterRef = useRef(null)
 
@@ -100,15 +101,15 @@ const UserListPanel = ({ users, selectedUser, onUserSelect, searchQuery, onSearc
     const q = searchQuery.toLowerCase()
     return users.filter(u => {
       const matchSearch = u.name.toLowerCase().includes(q) || 
-                          u.role.toLowerCase().includes(q) || 
+                          u.role.name.toLowerCase().includes(q) || 
                           u.department.toLowerCase().includes(q)
-      const matchRole = activeRoles.includes(u.role)
+      const matchRole = activeRoles.includes(u.role.id)
       return matchSearch && matchRole
     })
   }, [users, searchQuery, activeRoles])
 
   const toggleRole = (roleId) => {
-    if (roleId === 'ALL') setActiveRoles(['Driver', 'Dispatcher', 'Manager', 'Mechanic'])
+    if (roleId === 'ALL') setActiveRoles(['driver', 'dispatcher', 'manager', 'mechanic'])
     else if (roleId === 'NONE') setActiveRoles([])
     else {
       setActiveRoles(prev => prev.includes(roleId) ? prev.filter(r => r !== roleId) : [...prev, roleId])

@@ -90,7 +90,7 @@ const Monitor = () => {
       <AnimatePresence>
         {!isFullscreen && (
           <motion.div initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="h-full shrink-0">
-            <Sidebar activeTab="Dashboard" setActiveTab={() => {}} />
+            <Sidebar activeTab="Dashboard" setActiveTab={() => { }} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -136,9 +136,9 @@ const Monitor = () => {
               onSingleClick={handleSingleClick}
               onDoubleClick={handleDoubleClick}
             />
-            
+
             {/* Fullscreen/Expand Toggle Button */}
-            <button 
+            <button
               onClick={() => setIsFullscreen(!isFullscreen)}
               className="absolute bottom-24 right-4 z-[1000] w-10 h-10 bg-white rounded-xl shadow-premium flex items-center justify-center text-slate-500 hover:text-blue-600 hover:scale-110 active:scale-95 transition-all border border-white/50"
               title={isFullscreen ? "Exit Fullscreen" : "Expand Map"}
@@ -146,7 +146,7 @@ const Monitor = () => {
               {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
             </button>
 
-            <MapStatusFilter 
+            <MapStatusFilter
               activeStatuses={statusFilters}
               onToggleStatus={handleToggleStatus}
             />

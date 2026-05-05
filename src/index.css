@@ -5,156 +5,196 @@
   --font-sans: "Outfit", "Plus Jakarta Sans", "Inter", sans-serif;
   --font-outfit: "Outfit", sans-serif;
   --font-jakarta: "Plus Jakarta Sans", sans-serif;
-  
+
   --color-soft-bg: #F0F4F8;
   --color-soft-white: #FFFFFF;
   --color-tech-blue: #4F46E5;
   --color-tech-slate: #1E293B;
-  
-  --shadow-soft: 
-    8px 8px 16px #D1D9E6, 
+
+  --shadow-soft:
+    8px 8px 16px #D1D9E6,
     -8px -8px 16px #FFFFFF;
-  --shadow-premium: 
+  --shadow-premium:
     0 10px 25px -5px rgba(0, 0, 0, 0.05),
     0 8px 10px -6px rgba(0, 0, 0, 0.05);
   --shadow-pressed: inset 4px 4px 8px #CBD5E1, inset -4px -4px 8px #FFFFFF;
-  
+
   --radius-soft-lg: 24px;
   --radius-soft-md: 16px;
 }
 
 /* Dark Mode Overrides */
 .dark {
-  --color-soft-bg: #0F172A;
-  --color-soft-white: #1E293B;
+  --color-soft-bg: #020617;
+  --color-soft-white: #111827;
   --color-tech-slate: #F8FAFC;
-  
-  --shadow-soft: 
-    8px 8px 16px #020617, 
-    -8px -8px 16px #1E293B;
-  --shadow-premium: 
-    0 10px 25px -5px rgba(0, 0, 0, 0.3),
-    0 8px 10px -6px rgba(0, 0, 0, 0.3);
-  --shadow-pressed: inset 4px 4px 8px #020617, inset -4px -4px 8px #1E293B;
+
+  --shadow-soft:
+    8px 8px 16px #01040a,
+    -8px -8px 16px #0d1117;
+  --shadow-premium:
+    0 10px 25px -5px rgba(0, 0, 0, 0.5),
+    0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-pressed: inset 4px 4px 8px #01040a, inset -4px -4px 8px #0d1117;
 }
 
-/* ─── Global Dark Mode Card & Surface Overrides ─────────────────────────────
-   These rules automatically convert ALL hardcoded white/light surfaces to dark
-   equivalents without having to change every JSX file individually.
-   Priority: applied under the .dark scope only.
-─────────────────────────────────────────────────────────────────────────── */
+/* ─── Global Dark Mode Card & Surface Overrides ───────────────────────────── */
 
 /* White card backgrounds → dark card */
 .dark .bg-white {
-  background-color: #1E293B !important;
+  background-color: #0F172A !important;
 }
-.dark .bg-white\/60 {
-  background-color: rgba(30, 41, 59, 0.6) !important;
+
+.dark .bg-white\/80 {
+  background-color: rgba(15, 23, 42, 0.8) !important;
 }
+
 .dark .bg-white\/70 {
-  background-color: rgba(30, 41, 59, 0.7) !important;
+  background-color: rgba(15, 23, 42, 0.7) !important;
+}
+
+.dark .bg-white\/60 {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+.dark .bg-white\/40 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
 }
 
 /* White borders → dark borders */
 .dark .border-white {
-  border-color: #334155 !important;
-}
-.dark .border-white\/80 {
-  border-color: rgba(51, 65, 85, 0.8) !important;
-}
-.dark .border-white\/60 {
-  border-color: rgba(51, 65, 85, 0.6) !important;
-}
-.dark .border-white\/40 {
-  border-color: rgba(51, 65, 85, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Slate-50 backgrounds (used in list rows, settings etc.) → slightly lighter dark */
+.dark .border-white\/80 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .border-white\/60 {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .border-white\/40 {
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.dark .border-white\/50 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Slate-50 backgrounds → deeper dark */
 .dark .bg-slate-50 {
-  background-color: #0F172A !important;
+  background-color: #020617 !important;
 }
+
 .dark .bg-slate-50\/50 {
-  background-color: rgba(15, 23, 42, 0.5) !important;
+  background-color: rgba(2, 6, 23, 0.5) !important;
 }
+
 .dark .bg-slate-50\/30 {
-  background-color: rgba(15, 23, 42, 0.3) !important;
+  background-color: rgba(2, 6, 23, 0.3) !important;
 }
+
 .dark .hover\:bg-slate-50:hover {
   background-color: #0F172A !important;
 }
-.dark .hover\:bg-white:hover {
-  background-color: #263348 !important;
-}
 
-/* Slate-100 → subtle dark */
-.dark .bg-slate-100 {
+.dark .hover\:bg-white:hover {
   background-color: #1E293B !important;
 }
+
+/* Slate-100 & 200 overrides */
+.dark .bg-slate-100 {
+  background-color: #0F172A !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #1E293B !important;
+}
+
 .dark .border-slate-100 {
-  border-color: #334155 !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
 }
+
+.dark .border-slate-200 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
 .dark .border-slate-50 {
-  border-color: #1E293B !important;
-}
-.dark .border-slate-50\/50 {
-  border-color: rgba(30, 41, 59, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
 }
 
 /* Input fields */
 .dark input:not([type="range"]),
 .dark select,
 .dark textarea {
-  background-color: #1E293B !important;
+  background-color: #0F172A !important;
   color: #F8FAFC !important;
-  border-color: #334155 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Text colors */
 .dark .text-slate-900 {
   color: #F8FAFC !important;
 }
+
 .dark .text-slate-800 {
+  color: #F1F5F9 !important;
+}
+
+.dark .text-slate-700 {
   color: #E2E8F0 !important;
 }
-.dark .text-slate-700 {
+
+.dark .text-slate-600 {
   color: #CBD5E1 !important;
 }
-.dark .text-slate-600 {
+
+.dark .text-slate-500 {
   color: #94A3B8 !important;
 }
-.dark .text-slate-500 {
+
+.dark .text-slate-400 {
   color: #64748B !important;
 }
 
-/* Modal backdrops */
+/* Background Utility Overrides */
 .dark .bg-\[\#F8FAFC\] {
-  background-color: #0F172A !important;
+  background-color: #020617 !important;
+}
+
+.dark .bg-\[\#F0F4F8\] {
+  background-color: #020617 !important;
 }
 
 /* Table row hover states */
 .dark tr:hover td {
-  background-color: rgba(30, 41, 59, 0.5) !important;
+  background-color: rgba(255, 255, 255, 0.02) !important;
 }
 
 /* Fix modal/card shadows in dark mode */
 .dark .shadow-premium {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
 }
+
 .dark .shadow-xl {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(0, 0, 0, 0.5) !important;
 }
+
 .dark .shadow-2xl {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Smooth theme transitions on root elements */
+#root,
+html,
+body {
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Progress bars & small indicators */
 .dark .bg-slate-200 {
   background-color: #334155 !important;
-}
-
-/* Smooth theme transitions on root elements */
-#root, html, body {
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @layer base {
@@ -167,7 +207,7 @@
   .soft-card {
     @apply bg-soft-bg rounded-soft-lg shadow-soft border border-soft-white/10 transition-colors duration-300;
   }
-  
+
   .soft-card-white {
     @apply bg-soft-white rounded-soft-lg shadow-premium border border-soft-white/10 transition-colors duration-300;
   }
@@ -198,9 +238,11 @@
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   @apply bg-slate-300 rounded-full hover:bg-slate-400;
 }
@@ -210,9 +252,17 @@
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .animate-float {
@@ -222,6 +272,7 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -232,18 +283,19 @@
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 14px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
   padding: 10px 14px !important;
   font-family: 'Outfit', 'Inter', sans-serif !important;
   color: #1e293b !important;
   max-width: 220px !important;
 }
+
 .monitor-tooltip::before {
   display: none !important;
 }
+
 .leaflet-tooltip-top.monitor-tooltip::before {
   border-top-color: #ffffff !important;
   display: block !important;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
 }
-

@@ -97,7 +97,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
               </motion.div>
               <div className="flex-1 min-w-0 pt-1">
                 <h2 className="text-xl font-black text-slate-800 tracking-tight leading-none truncate">{v.name}</h2>
-                <p className="text-sm font-bold text-slate-400 mt-1">{v.year} {v.make} {v.model}</p>
+                <p className="text-sm font-bold text-slate-400 mt-1">{v.year} · {v.model}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-lg border border-slate-100">
                     <ShieldCheck className="w-3 h-3 text-blue-500" />
@@ -116,10 +116,10 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         return (
           <Reorder.Item key="stats_strip" value="stats_strip" className="grid grid-cols-4 gap-3 mb-4">
             {[
-              { l: 'Today km', v: v.location?.kmToday || 124, s: 'km' },
+              { l: 'Odometer', v: v.odometer || 0, s: 'km' },
               { l: 'Efficiency', v: 92, s: '%' },
-              { l: 'Idle Time', v: 14, s: 'm' },
-              { l: 'Active', v: 8, s: 'h' }
+              { l: 'Fuel Level', v: v.vitals?.fuel || 0, s: '%' },
+              { l: 'Engine Load', v: v.vitals?.engineLoad || 0, s: '%' }
             ].map(s => (
               <div key={s.l} className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col items-center">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.l}</p>
@@ -132,10 +132,10 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         return (
           <Reorder.Item key="telemetry_grid" value="telemetry_grid" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
             <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-              <ProgressBar label="Engine Health" value={88} color="bg-emerald-500" icon={Zap} keyId={v.id} />
-              <ProgressBar label="Tire Pressure" value={95} color="bg-blue-500" icon={Droplets} keyId={v.id} />
-              <ProgressBar label="Battery Life" value={76} color="bg-indigo-500" icon={RefreshCw} keyId={v.id} />
-              <ProgressBar label="Coolant Temp" value={42} color="bg-amber-500" icon={Thermometer} keyId={v.id} />
+              <ProgressBar label="Engine Load" value={v.vitals?.engineLoad || 0} color="bg-emerald-500" icon={Zap} keyId={v.id} />
+              <ProgressBar label="Fuel Level" value={v.vitals?.fuel || 0} color="bg-blue-500" icon={Fuel} keyId={v.id} />
+              <ProgressBar label="Battery Life" value={v.vitals?.battery || 0} color="bg-indigo-500" icon={RefreshCw} keyId={v.id} />
+              <ProgressBar label="System Temp" value={v.vitals?.temp || 0} color="bg-amber-500" icon={Thermometer} keyId={v.id} />
             </div>
           </Reorder.Item>
         )

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  ArrowLeft, MapPin, Activity, Truck, Fuel, Gauge, 
-  Thermometer, ShieldCheck, Wrench, Zap, Bell, 
-  TrendingUp, Clock, AlertTriangle, Send, Lock, 
-  Flag, Navigation, Plus, UserPlus, X, ChevronRight, 
+import {
+  ArrowLeft, MapPin, Activity, Truck, Fuel, Gauge,
+  Thermometer, ShieldCheck, Wrench, Zap, Bell,
+  TrendingUp, Clock, AlertTriangle, Send, Lock,
+  Flag, Navigation, Plus, UserPlus, X, ChevronRight,
   Search, Shield, Battery, MoreVertical
 } from 'lucide-react'
 import { mockVehicles } from '../mockData'
@@ -16,10 +16,10 @@ import AddVehicleModal from '../components/AddVehicleModal'
 import toast from 'react-hot-toast'
 
 // ── Animation presets ─────────────────────────────────────────────────────────
-const fadeUp = (d = 0) => ({ 
-  initial: { opacity: 0, y: 18 }, 
-  animate: { opacity: 1, y: 0 }, 
-  transition: { duration: 0.4, delay: d, ease: [0.22, 1, 0.36, 1] } 
+const fadeUp = (d = 0) => ({
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.4, delay: d, ease: [0.22, 1, 0.36, 1] }
 })
 
 // ── SVG Ring Component ────────────────────────────────────────────────────────
@@ -55,10 +55,10 @@ const VehiclesPage = () => {
   const location = useLocation()
   const [searchQuery, setSearchQuery] = useState('')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  
+
   const queryParams = new URLSearchParams(location.search)
   const queryId = queryParams.get('id')
-  
+
   const [selectedVehicle, setSelectedVehicle] = useState(() => {
     return mockVehicles.find(v => v.id === queryId) || mockVehicles[0]
   })
@@ -83,16 +83,16 @@ const VehiclesPage = () => {
 
   return (
     <div className="flex h-screen w-screen bg-[#F0F4F8] overflow-hidden">
-      <Sidebar activeTab="Vehicles" setActiveTab={() => {}} />
-      
+      <Sidebar activeTab="Vehicles" setActiveTab={() => { }} />
+
       <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 gap-2">
         <TopBar />
-        
+
         {/* Asset Stats Bar */}
         <div className="flex gap-3 mb-1 shrink-0">
           <div className="bg-white rounded-2xl p-4 flex-1 border border-slate-100 flex items-center gap-4 shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-               <Truck className="w-5 h-5" />
+              <Truck className="w-5 h-5" />
             </div>
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fleet Inventory</p>
@@ -108,7 +108,7 @@ const VehiclesPage = () => {
                 <p className="text-sm font-black text-red-500 leading-none">4 Critical</p>
               </div>
             </div>
-            <button 
+            <button
               onClick={() => setIsAddModalOpen(true)}
               className="h-10 px-4 bg-tech-blue text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all"
             >
@@ -118,9 +118,9 @@ const VehiclesPage = () => {
         </div>
 
         <div className="flex-1 flex gap-3 overflow-hidden min-h-0">
-          
+
           {/* Left Panel: Vehicle List */}
-          <VehicleListPanel 
+          <VehicleListPanel
             vehicles={mockVehicles}
             selectedVehicle={v}
             onVehicleSelect={handleVehicleSelect}
@@ -131,7 +131,7 @@ const VehiclesPage = () => {
           {/* Right Panel: Detailed Asset Information */}
           <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
             <AnimatePresence mode="wait">
-              <motion.div 
+              <motion.div
                 key={v.id}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -139,13 +139,13 @@ const VehiclesPage = () => {
                 transition={{ duration: 0.3 }}
                 className="pb-8"
               >
-                
+
                 {/* HERO HEADER */}
                 <div className="relative rounded-[2rem] overflow-hidden mb-5 shadow-sm"
                   style={{ background: 'linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#3b82f6 100%)' }}>
                   <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full opacity-10 bg-white" />
                   <div className="absolute left-1/4 -bottom-10 w-40 h-40 rounded-full opacity-5 bg-white" />
-                  
+
                   <div className="px-8 py-7 flex items-start gap-6">
                     <div className="w-24 h-20 rounded-[1.5rem] overflow-hidden border-4 border-white/25 shadow-2xl shrink-0 relative bg-slate-800">
                       <img src={v.photo || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=300"} alt="" className="w-full h-full object-cover" />
@@ -158,7 +158,7 @@ const VehiclesPage = () => {
                         <span className="text-blue-100/60 text-sm font-mono">{v.id}</span>
                       </div>
                       <p className="text-blue-100 text-sm font-bold uppercase tracking-wider">{v.plate} &nbsp;·&nbsp; {v.zone}</p>
-                      
+
                       <div className="flex items-center gap-4 mt-3">
                         <div className="flex items-center gap-1.5 text-blue-50">
                           <MapPin className="w-3.5 h-3.5 opacity-70" />
@@ -172,11 +172,11 @@ const VehiclesPage = () => {
                     </div>
 
                     <div className="flex gap-2 shrink-0">
-                      <button onClick={() => toast.success('Diagnostics triggerred')} 
+                      <button onClick={() => toast.success('Diagnostics triggerred')}
                         className="px-4 py-2.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-xl text-xs font-bold text-white flex items-center gap-2 transition-all">
                         <Wrench className="w-3.5 h-3.5" />Service
                       </button>
-                      <button onClick={() => toast.success('Remote command sent')} 
+                      <button onClick={() => toast.success('Remote command sent')}
                         className="px-4 py-2.5 bg-white rounded-xl text-xs font-bold text-blue-700 flex items-center gap-2 hover:bg-blue-50 transition-all shadow-lg">
                         <Navigation className="w-3.5 h-3.5" />Route
                       </button>
@@ -190,7 +190,7 @@ const VehiclesPage = () => {
                     { label: 'Current Speed', value: `${v.speed ?? 0} kmh`, color: '#3B82F6' },
                     { label: 'Fuel Level', value: `${v.vitals?.fuel ?? 0}%`, color: fuelColor },
                     { label: 'System Temp', value: `${v.vitals?.temp ?? 42}°C`, color: '#F59E0B' },
-                    { label: 'Mileage', value: `${(v.vitals?.mileage / 1000).toFixed(1)}k`, color: '#8B5CF6' },
+                    { label: 'Mileage', value: `${(v.odometer / 1000).toFixed(1)}k`, color: '#8B5CF6' },
                     { label: 'Battery', value: `${v.vitals?.battery ?? 0}%`, color: batteryColor },
                   ].map((s, i) => (
                     <motion.div key={i} {...fadeUp(i * 0.05)} className="bg-white rounded-2xl p-4 text-center border border-slate-100 shadow-sm">

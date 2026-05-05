@@ -26,7 +26,7 @@ const CommandPalette = () => {
       .map(v => ({ ...v, type: 'vehicle', icon: Truck, category: 'Vehicles', path: `/vehicle/${v.id}` }))
 
     const userResults = mockUsers
-      .filter(u => u.name.toLowerCase().includes(query.toLowerCase()) || u.role.toLowerCase().includes(query.toLowerCase()))
+      .filter(u => u.name.toLowerCase().includes(query.toLowerCase()) || u.role.name.toLowerCase().includes(query.toLowerCase()))
       .map(u => ({ ...u, type: 'user', icon: Users, category: 'Team', path: `/profile/${u.id}` }))
 
     const pageResults = [
@@ -141,7 +141,7 @@ const CommandPalette = () => {
                              <p className="text-sm font-bold text-tech-slate">{item.name || item.id}</p>
                              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 uppercase tracking-widest">{item.category}</span>
                           </div>
-                          {item.role && <p className="text-[10px] text-slate-400 font-medium">{item.role} • {item.status}</p>}
+                          {item.role && <p className="text-[10px] text-slate-400 font-medium">{item.role.name} • {item.status}</p>}
                           {item.model && <p className="text-[10px] text-slate-400 font-medium">{item.model} • {item.zone}</p>}
                         </div>
                         <ChevronRight className="w-4 h-4 text-slate-300 opacity-0 group-hover:opacity-100 transition-all translate-x-[-10px] group-hover:translate-x-0" />

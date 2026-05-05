@@ -109,7 +109,7 @@ const TopBar = ({ hideSearch = false, hideProfile = false, hideNotifications = f
                           </div>
                           <div>
                             <p className="text-xs font-bold text-tech-slate group-hover:text-tech-blue">{u.name}</p>
-                            <p className="text-[10px] text-slate-400 font-medium">{u.role} • {u.compliance}</p>
+                            <p className="text-[10px] text-slate-400 font-medium">{u.role.name} • {u.compliance}</p>
                           </div>
                         </div>
                       ))}

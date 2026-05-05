@@ -53,7 +53,7 @@ const CompliancePage = () => {
 
   // Filter only drivers and add compliance metadata
   const drivers = useMemo(() => {
-    const baseDrivers = mockUsers.filter(u => u.role === 'Driver')
+    const baseDrivers = mockUsers.filter(u => u.role.id === 'driver')
     return baseDrivers.map(d => ({
       ...d,
       dailyDrive: Math.floor(Math.random() * 90) + 10,
