@@ -1,0 +1,198 @@
+Next-Gen Enterprise Fleet Management Platform (Soft UI / Zero-Click)
+
+1. PROJECT BACKGROUND & CORE VISION
+We are redesigning the front-end experience for a powerful, existing Fleet Management System. The current backend is powered by "Violon" (a robust, API-driven engine). The current UI is functional but highly cluttered, outdated, and requires too many clicks to reach critical data.
+
+The Vision: We are shifting from a "search and find" interface to a "predict and present" interface. The system holds massive amounts of data (telematics, fuel, driver compliance, route history), but the UI must feel light, breathable, and instantaneous. We are adopting a "Zero-Click" philosophy: a user should understand the exact health, location, and status of their fleet simply by looking at the screen and hovering over elements, without needing to dig through menus.
+
+2. THE DESIGN SYSTEM & AESTHETIC (SOFT UI)
+The visual language must communicate trust, high technology, and calm control. Fleet managers deal with stressful situations (breakdowns, delays); the UI should not add to their cognitive load.
+
+Theme: Modern "Soft UI" / Neumorphism-inspired (but accessible). Use subtle, diffused drop shadows to create depth rather than harsh borders.
+
+Color Palette:
+
+Backgrounds: Clean off-white or very light cool gray (e.g., #F8F9FA or #F3F4F6) to reduce eye strain.
+
+Primary Accent: A professional, deep tech blue or slate (e.g., #2563EB or #0F172A).
+
+Status Indicators (Crucial): Vibrant, accessible colors. Emerald Green (Healthy/Moving), Amber/Yellow (Warning/Idle), Soft Coral/Red (Critical Alarm/Violation). Avoid aggressive, blinding reds.
+
+Typography: Geometric, highly legible sans-serif. Inter, Plus Jakarta Sans, or Roboto. Numbers must be tabular (monospaced alignment) so live-updating data doesn't cause layout shifting.
+
+Shapes: Rounded corners on cards and widgets (e.g., 12px to 16px radius). Glassmorphism effects (frosted glass blur) specifically for hover states and modal popups to maintain context of the map behind it.
+
+3. ROLE-BASED PERSONAS (CONTEXTUAL DESIGN)
+The dashboard must adapt to who is logging in. Design the UI with modularity in mind, allowing the layout to change based on the following roles:
+
+The Dispatcher: Needs to see the Map, Driver Hours (European compliance regulations), and live traffic.
+
+The Mechanic / Fleet Manager: Cares less about the map, and more about Vehicle Health, Engine Diagnostics, Service Schedules, and active fault codes.
+
+Executive Management: Wants high-level KPIs, CO2 emissions reports, and overall fleet efficiency scores.
+
+4. CORE LAYOUT & ARCHITECTURE
+The screen should be divided into a clean, logical grid:
+
+Top Navigation & KPI Bar:
+
+A sleek top bar containing the user profile, global search (to find any vehicle or driver instantly), and notification bell.
+
+Directly below, a horizontal row of KPI Cards: Total Active Vehicles, Critical Alarms (with a glowing indicator), Fleet Online %, and Unassigned Tasks.
+
+The Central Workspace (The Map Engine):
+
+This occupies the majority of the screen. The map should be customized (muted colors, not a standard bright Google Maps look) so the vehicle pins stand out.
+
+Clustering: Show elegant clusters (e.g., a circle with "12" inside) when vehicles are close together.
+
+Left/Right Side Panels (Modular):
+
+Floating panels over the map. On the left, a searchable, filterable List View of all vehicles.
+
+On the right, the Dynamic Widget Zone (Alarms, Health Checks, Quick Reports).
+
+5. THE "ZERO-CLICK" HOVER EXPERIENCE (CRITICAL INTERACTION)
+This is the most important part of the prompt. I need you to design a high-fidelity Hover Card. When a user hovers over a vehicle pin on the map or a name in the list, a sleek, frosted-glass card elegantly fades in.
+The Hover Card must contain:
+
+Header: Vehicle ID, Driver Photo/Name, and a mini status badge (e.g., "Moving at 65 km/h").
+
+Driver Compliance Rings: A circular progress chart showing "Driving Time," "Resting Time," and "Time Left Before Required Break" (crucial for EU regulations).
+
+Vehicle Vitals:
+
+Fuel/Battery Level (visualized as a tiny, clean bar or liquid gauge).
+
+Signal Strength (Satellite/GSM connection icon).
+
+Odometer / Engine Temp (if applicable).
+
+Quick Actions: 1-click ghost buttons at the bottom of the card: "Message Driver", "View Full History", "Route to...".
+
+6. DATA CUSTOMIZATION & FLEXIBILITY
+Showcase how flexible the UI is. We need a design for an "Edit View" or "Customization Mode".
+
+Widget Library: Show a state where the user is dragging and dropping widgets onto their dashboard.
+
+Industry Flexibility: Design two distinct widget examples to show versatility:
+
+Example A (Cold Chain/Pharma): A widget showing real-time trailer temperature with a historical sparkline chart.
+
+Example B (Heavy Machinery): A widget showing "Engine Idle Hours" vs "Working Hours" for excavators.
+
+Micro-Filters: Every data card should have a sleek, unobtrusive toggle (e.g., a pill-shaped switch) to instantly change data from "Daily" to "Weekly" without reloading the page.
+
+7. SPECIFIC DELIVERABLES REQUIRED
+Please generate the following high-fidelity UI screens/frames:
+
+The Master Dashboard: The main default view showing the map, top KPI bar, left vehicle list, and right-side active alarm widgets.
+
+The Hover Interaction: A zoomed-in, highly detailed frame showing exactly what the "Hover Card" looks like when a mouse is over a vehicle pin, complete with driver compliance donuts and vehicle vitals.
+
+The Customization State: A screen demonstrating the drag-and-drop widget system and role-based customization menu.
+
+⚡ INTERACTION & MOTION DESIGN ADDENDUM
+8. MODERN ANIMATIONS & MICRO-INTERACTIONS
+The UI must feel alive, fluid, and highly responsive. Do not use standard, stiff web transitions. The motion design should mimic high-end mobile operating systems (like iOS or Android's Material You), utilizing spring physics and smooth easing.
+
+Staggered Reveals: When the dashboard loads or a user switches views, data cards and list items should not appear instantly. They should cascade into view with a subtle staggered fade-in and slight upward slide (e.g., 20ms delay between each card).
+
+Skeleton Loading State: Never show a blank screen or a basic spinning wheel while data fetches. Design a sleek, shimmering "skeleton" layout of the cards and map to indicate that data is populating.
+
+Fluid Layout Shifts (FLIP animations): If a user resizes a widget or toggles a side panel open/closed, the map and remaining widgets must smoothly scale and slide to accommodate the new space, rather than snapping violently.
+
+Micro-Interactions: Toggles (daily/weekly views) should have a satisfying physical sliding animation. Buttons should have a subtle "press" effect (scaling down to 98% size on click) to provide tactile visual feedback.
+
+9. ADVANCED HOVER STATES & GLASSMORPHISM
+Hover effects should act as a primary tool for "progressive disclosure"—revealing deep data only when the user shows intent.
+
+Magnetic Elements: Critical action buttons (like "Message Driver") should have a subtle magnetic pull, slightly following the user's cursor as it gets close, making it faster and easier to click.
+
+The Master Hover Card (Fluid Morphing): When hovering over a vehicle pin, the frosted-glass card should not just pop up. It should scale up smoothly from the pin itself (state morphing). The data inside (like the fuel gauge or driver hours donut chart) should animate to their current values upon hover, drawing the eye immediately to the live data.
+
+Row Highlight & Sync: If a user hovers over a vehicle in the left-hand text list, the corresponding pin on the central map should gently pulse or bounce, creating an instant visual connection between the list and the map.
+
+10. FAST ACCESS & ZERO-FRICTION NAVIGATION
+Fleet managers need to move quickly. The design must accommodate power users who want to bypass menus entirely.
+
+The Global Command Palette (Omnibar): Design a central search bar that acts like Apple's Spotlight or standard Dev tools (invoked by Cmd+K or Ctrl+K). Users can type anything here: a driver's name, a license plate, or a command like "Export CO2 Report." It should show an instant, dropdown overlay of results.
+
+Right-Click Context Menus: Design a custom, sleek right-click menu tailored to the application. Right-clicking a vehicle on the map should instantly bring up a small list of quick actions: Pin to Dashboard, Route History, Call Driver, Create Maintenance Ticket.
+
+Floating Action Button (FAB) / Quick Add: Include a subtle, floating "+" button in the bottom right corner (or integrated into the top nav) for lightning-fast data entry, such as adding a new geofence, creating a quick dispatch task, or logging a manual fuel entry.
+
+
+Design ...
+
+MASTER DESIGN BRIEF: Next-Gen Enterprise Fleet Management Platform
+To: AI UI/UX Designer (Stich / Antigravity)
+Subject: Complete UI/UX Overhaul & Modernization of Fleet Management Dashboard
+Design Paradigm: Soft UI, Minimalist, Data-Dense but Visually Sparse, "Zero-Click" Architecture.
+
+---
+
+1. PROJECT BACKGROUND & CORE VISION
+We are redesigning the front-end experience for a powerful, existing Fleet Management System backed by a robust API engine. The current UI is functional but cluttered, outdated, and requires too many clicks to reach critical data. 
+The Vision: Shift from a "search and find" interface to a "predict and present" interface. We are adopting a strict "Zero-Click" philosophy: a user should understand the exact health, location, and status of their fleet simply by looking at the screen and hovering over elements, without digging through menus.
+
+2. THE DESIGN SYSTEM & AESTHETIC (SOFT UI)
+The visual language must communicate trust, high technology, and calm control to reduce cognitive load.
+* Theme: Modern "Soft UI" / Neumorphism-inspired (but highly accessible). Use subtle, diffused drop shadows to create depth rather than harsh borders or heavy lines.
+* Color Palette: 
+  - Backgrounds: Clean off-white or very light cool gray (e.g., #F8F9FA) to reduce eye strain.
+  - Primary Accent: Deep tech blue or slate (e.g., #2563EB or #0F172A).
+  - Status Indicators: Vibrant, accessible colors. Emerald Green (Healthy), Amber (Warning), Soft Coral (Critical). Avoid blinding reds.
+* Typography: Geometric, highly legible sans-serif (Inter, Plus Jakarta Sans, or Roboto). Use tabular numbers for live-updating data.
+* Shapes: Rounded corners on cards/widgets (12px-16px radius).
+
+3. ROLE-BASED PERSONAS (CONTEXTUAL DESIGN)
+Design the UI with modularity in mind. It must adapt to:
+* The Dispatcher: Prioritizes the Map, Driver Hours (EU compliance), and live traffic.
+* The Mechanic: Prioritizes Vehicle Health, Engine Diagnostics, Service Schedules, and active fault codes.
+* Executive Management: Prioritizes high-level KPIs, CO2 emissions reports, and fleet efficiency.
+
+4. CORE LAYOUT & ARCHITECTURE
+Divide the screen into a clean, logical grid:
+* Top Navigation & KPI Bar: A sleek top bar (profile, global search, notifications) sitting above a horizontal row of high-level KPI Cards (Total Active Vehicles, Critical Alarms, Fleet Online %).
+* Central Workspace (The Map Engine): The main focal point. Use a customized, muted map style so vehicle pins pop. Use elegant clustering (e.g., a circle with "12" inside) for dense areas.
+* Modular Side Panels: Floating panels over the map. Left: Searchable, filterable List View of all vehicles. Right: Dynamic Widget Zone (Alarms, Health Checks).
+
+5. ADVANCED HOVER STATES & GLASSMORPHISM (THE "ZERO-CLICK" EXPERIENCE)
+This is a critical interaction. Hover effects act as "progressive disclosure."
+* The Master Hover Card: When hovering over a vehicle pin, a frosted-glass (Glassmorphism) card smoothly morphs and scales up from the pin.
+* Hover Data Requirements:
+  - Header: Vehicle ID, Driver Photo/Name, mini status badge.
+  - Driver Compliance Rings: Circular progress chart showing Driving Time vs. Resting Time.
+  - Vehicle Vitals: Fuel/Battery Level (animated liquid gauge), Signal Strength, Odometer.
+* Magnetic Elements: 1-click ghost buttons ("Message Driver", "View Route") at the bottom of the card with a magnetic pull effect towards the cursor.
+* Row Highlight & Sync: Hovering over a vehicle in the left-hand text list makes the corresponding pin on the central map gently pulse/bounce.
+
+6. MODERN ANIMATIONS & MOTION DESIGN
+The UI must feel alive, mimicking high-end mobile OS physics (spring mechanics, smooth easing).
+* Staggered Reveals: Data cards and lists cascade into view with a staggered fade-in and slight upward slide (e.g., 20ms delay).
+* Skeleton Loading: Use sleek, shimmering skeleton layouts during data fetching instead of basic spinners.
+* Fluid Layout Shifts (FLIP animations): Resizing widgets or toggling panels causes the map and remaining widgets to smoothly scale and slide to fit the new space.
+* Micro-Interactions: Daily/weekly toggle switches have a satisfying physical sliding animation; buttons scale down to 98% on click for tactile feedback.
+
+7. FAST ACCESS & ZERO-FRICTION NAVIGATION
+Design for power users to bypass menus entirely:
+* The Global Command Palette (Omnibar): A central search bar (invoked by Cmd+K) that shows an instant dropdown. Users can type a driver name, license plate, or command like "Export CO2 Report."
+* Right-Click Context Menus: Right-clicking a vehicle on the map brings up a sleek, custom list of quick actions (Pin to Dashboard, Route History, Call Driver).
+* Floating Action Button (FAB): A subtle "+" button for lightning-fast data entry (add geofence, create task).
+
+8. DATA CUSTOMIZATION & FLEXIBILITY
+Showcase an "Edit View" or "Customization Mode":
+* Widget Library: Show a drag-and-drop widget system.
+* Industry Flexibility: Include specific widgets to show versatility:
+  - Example A (Cold Chain): Real-time trailer temperature with a historical sparkline chart.
+  - Example B (Heavy Machinery): "Engine Idle Hours" vs "Working Hours" donut chart.
+* Micro-Filters: Every data card must have a sleek toggle (e.g., a pill-shaped switch) to instantly change data from "Daily" to "Weekly" without reloading.
+
+9. SPECIFIC DELIVERABLES REQUIRED
+Generate high-fidelity UI screens/frames showcasing:
+1. The Master Dashboard: Default view with map, top KPI bar, left list, right widgets.
+2. The Hover Interaction: Zoomed-in, highly detailed frame showing the Glassmorphism Hover Card over a vehicle pin, complete with animating data and compliance rings.
+3. The Customization State: Screen demonstrating the drag-and-drop widget system and role-based customization menu.
+
+Final Note: Maximize data accessibility while minimizing visual noise. Make it look like a piece of enterprise software built by Apple or Tesla.

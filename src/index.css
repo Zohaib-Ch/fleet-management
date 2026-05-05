@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+  
+  --color-soft-bg: #F0F4F8;
+  --color-soft-white: #FFFFFF;
+  --color-tech-blue: #4F46E5;
+  --color-tech-slate: #1E293B;
+  
+  --shadow-soft: 
+    8px 8px 16px #D1D9E6, 
+    -8px -8px 16px #FFFFFF;
+  --shadow-premium: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-pressed: inset 4px 4px 8px #CBD5E1, inset -4px -4px 8px #FFFFFF;
+  
+  --radius-soft-lg: 24px;
+  --radius-soft-md: 16px;
+}
+
+/* Dark Mode Overrides */
+.dark {
+  --color-soft-bg: #0F172A;
+  --color-soft-white: #1E293B;
+  --color-tech-slate: #F8FAFC;
+  
+  --shadow-soft: 
+    8px 8px 16px #020617, 
+    -8px -8px 16px #1E293B;
+  --shadow-premium: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.3),
+    0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --shadow-pressed: inset 4px 4px 8px #020617, inset -4px -4px 8px #1E293B;
+}
+
+/* ─── Global Dark Mode Card & Surface Overrides ─────────────────────────────
+   These rules automatically convert ALL hardcoded white/light surfaces to dark
+   equivalents without having to change every JSX file individually.
+   Priority: applied under the .dark scope only.
+─────────────────────────────────────────────────────────────────────────── */
+
+/* White card backgrounds → dark card */
+.dark .bg-white {
+  background-color: #1E293B !important;
+}
+.dark .bg-white\/60 {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+}
+.dark .bg-white\/70 {
+  background-color: rgba(30, 41, 59, 0.7) !important;
+}
+
+/* White borders → dark borders */
+.dark .border-white {
+  border-color: #334155 !important;
+}
+.dark .border-white\/80 {
+  border-color: rgba(51, 65, 85, 0.8) !important;
+}
+.dark .border-white\/60 {
+  border-color: rgba(51, 65, 85, 0.6) !important;
+}
+.dark .border-white\/40 {
+  border-color: rgba(51, 65, 85, 0.4) !important;
+}
+
+/* Slate-50 backgrounds (used in list rows, settings etc.) → slightly lighter dark */
+.dark .bg-slate-50 {
+  background-color: #0F172A !important;
+}
+.dark .bg-slate-50\/50 {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+}
+.dark .bg-slate-50\/30 {
+  background-color: rgba(15, 23, 42, 0.3) !important;
+}
+.dark .hover\:bg-slate-50:hover {
+  background-color: #0F172A !important;
+}
+.dark .hover\:bg-white:hover {
+  background-color: #263348 !important;
+}
+
+/* Slate-100 → subtle dark */
+.dark .bg-slate-100 {
+  background-color: #1E293B !important;
+}
+.dark .border-slate-100 {
+  border-color: #334155 !important;
+}
+.dark .border-slate-50 {
+  border-color: #1E293B !important;
+}
+.dark .border-slate-50\/50 {
+  border-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+/* Input fields */
+.dark input:not([type="range"]),
+.dark select,
+.dark textarea {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+}
+
+/* Text colors */
+.dark .text-slate-900 {
+  color: #F8FAFC !important;
+}
+.dark .text-slate-800 {
+  color: #E2E8F0 !important;
+}
+.dark .text-slate-700 {
+  color: #CBD5E1 !important;
+}
+.dark .text-slate-600 {
+  color: #94A3B8 !important;
+}
+.dark .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* Modal backdrops */
+.dark .bg-\[\#F8FAFC\] {
+  background-color: #0F172A !important;
+}
+
+/* Table row hover states */
+.dark tr:hover td {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+/* Fix modal/card shadows in dark mode */
+.dark .shadow-premium {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+}
+.dark .shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3) !important;
+}
+.dark .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Progress bars & small indicators */
+.dark .bg-slate-200 {
+  background-color: #334155 !important;
+}
+
+/* Smooth theme transitions on root elements */
+#root, html, body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer base {
+  body {
+    @apply bg-soft-bg font-sans text-tech-slate overflow-hidden transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .soft-card {
+    @apply bg-soft-bg rounded-soft-lg shadow-soft border border-soft-white/10 transition-colors duration-300;
+  }
+  
+  .soft-card-white {
+    @apply bg-soft-white rounded-soft-lg shadow-premium border border-soft-white/10 transition-colors duration-300;
+  }
+
+  .pressed {
+    @apply shadow-pressed transition-shadow duration-300;
+    box-shadow: var(--shadow-pressed) !important;
+  }
+
+  .glass-panel {
+    @apply bg-soft-white/70 backdrop-blur-xl border border-soft-white/40 shadow-2xl shadow-black/5 transition-colors duration-300;
+  }
+}
+
+.tabular-nums {
+  font-family: 'Inter', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Monitor Tab: map tooltip ─────────────────────────────────────────────── */
+.monitor-tooltip {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+  padding: 10px 14px !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  color: #1e293b !important;
+  max-width: 220px !important;
+}
+.monitor-tooltip::before {
+  display: none !important;
+}
+.leaflet-tooltip-top.monitor-tooltip::before {
+  border-top-color: #ffffff !important;
+  display: block !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+}
+
