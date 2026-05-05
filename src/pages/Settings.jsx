@@ -54,10 +54,10 @@ const SettingsPage = () => {
   ]
 
   return (
-    <div className="flex h-screen w-screen bg-soft-bg overflow-hidden p-4 gap-4">
+    <div className="flex h-screen w-screen bg-soft-bg overflow-hidden">
       <Sidebar activeTab="Settings" setActiveTab={() => {}} />
       
-      <main className="flex-1 flex flex-col gap-6 overflow-hidden">
+      <main className="flex-1 flex flex-col gap-6 overflow-hidden p-4">
         <TopBar />
         
         <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">

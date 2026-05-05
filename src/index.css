@@ -205,6 +205,10 @@
   @apply bg-slate-300 rounded-full hover:bg-slate-400;
 }
 
+.stable-scrollbar {
+  scrollbar-gutter: stable;
+}
+
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }

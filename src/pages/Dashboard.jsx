@@ -59,10 +59,10 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#F8FAFC] overflow-hidden p-3 gap-3">
+    <div className="flex h-screen w-screen bg-[#F8FAFC] overflow-hidden">
       <Sidebar activeTab="Analytics" setActiveTab={() => {}} />
       
-      <main className="flex-1 flex flex-col gap-3 overflow-hidden">
+      <main className="flex-1 flex flex-col gap-3 overflow-hidden p-3">
         <TopBar />
         
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-10 space-y-4">

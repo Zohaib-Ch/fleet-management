@@ -118,7 +118,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col gap-1.5 overflow-x-hidden">
+        <nav className={`flex flex-col gap-1.5 overflow-x-hidden overflow-y-auto custom-scrollbar min-h-0 ${!isCollapsed ? 'stable-scrollbar pr-2' : ''}`}>
           {navItems.map((item) => (
             hasPermission(item.permission) && (
               <SidebarItem 
@@ -167,16 +167,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             </div>
           </div>
 
-          <div className={`px-4 py-3 bg-indigo-600 rounded-2xl text-center shadow-lg shadow-indigo-100 flex flex-col items-center transition-all ${isCollapsed ? 'px-2 py-4' : ''}`}>
-             {!isCollapsed ? (
-               <>
-                 <p className="text-[10px] font-bold text-indigo-100 uppercase mb-1">System Health</p>
-                 <p className="text-xs font-bold text-white uppercase tracking-widest">98.4% Stable</p>
-               </>
-             ) : (
-               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-             )}
-          </div>
         </div>
       </motion.aside>
 
