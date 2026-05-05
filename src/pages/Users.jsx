@@ -8,7 +8,7 @@ import {
   Zap, Bell, CheckCircle2, TrendingUp, UserCheck, Truck,
   Users, UserPlus, Search
 } from 'lucide-react'
-import { mockUsers } from '../mockData'
+import { mockUsers, addUser } from '../mockData'
 import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
 import UserListPanel from '../components/users/UserListPanel'
@@ -55,6 +55,7 @@ const UsersPage = () => {
   const location = useLocation()
 
   // Search state
+  const [users, setUsers] = useState(mockUsers)
   const [searchQuery, setSearchQuery] = useState('')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
@@ -63,20 +64,25 @@ const UsersPage = () => {
   const queryId = queryParams.get('id')
 
   const [selectedUser, setSelectedUser] = useState(() => {
-    return mockUsers.find(u => u.id === queryId) || mockUsers[0]
+    return users.find(u => u.id === queryId) || users[0]
   })
 
   useEffect(() => {
     if (queryId) {
-      const user = mockUsers.find(u => u.id === queryId)
+      const user = users.find(u => u.id === queryId)
       if (user) setSelectedUser(user)
     }
-  }, [queryId])
+  }, [queryId, users])
 
   const handleUserSelect = (user) => {
     setSelectedUser(user)
-    // Update URL query param to maintain selection in history
     navigate(`/users?id=${user.id}`, { replace: true })
+  }
+
+  const handleAddUser = (newUser) => {
+    const updated = addUser(newUser)
+    setUsers([...updated])
+    toast.success('Personnel member added')
   }
 
   const u = selectedUser
@@ -98,7 +104,7 @@ const UsersPage = () => {
             </div>
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fleet Personnel</p>
-              <p className="text-xl font-black text-slate-800 leading-none">{mockUsers.length} <span className="text-xs text-slate-400 font-bold ml-1">Team Members</span></p>
+              <p className="text-xl font-black text-slate-800 leading-none">{users.length} <span className="text-xs text-slate-400 font-bold ml-1">Team Members</span></p>
             </div>
             <div className="ml-auto flex gap-4 pr-4">
               <div className="text-right">
@@ -123,7 +129,7 @@ const UsersPage = () => {
 
           {/* Left Panel: User List with Category Filter */}
           <UserListPanel
-            users={mockUsers}
+            users={users}
             selectedUser={u}
             onUserSelect={handleUserSelect}
             searchQuery={searchQuery}
@@ -307,7 +313,7 @@ const UsersPage = () => {
       <AddUserModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAdd={(newUser) => toast.success('Personnel member added')}
+        onAdd={handleAddUser}
       />
     </div>
   )

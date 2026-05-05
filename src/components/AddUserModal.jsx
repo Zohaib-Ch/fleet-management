@@ -13,10 +13,17 @@ const AddUserModal = ({ isOpen, onClose, onAdd }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const roleId = formData.role.toLowerCase()
     const newUser = {
       ...formData,
       id: `usr-${Math.floor(1000 + Math.random() * 9000)}`,
+      role: {
+        id: roleId,
+        name: formData.role
+      },
       photo: `https://i.pravatar.cc/150?u=${formData.name}`,
+      department: roleId === 'driver' ? 'Logistics' : 'Operations',
+      joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       performance: 100,
       compliance: 'Compliant'
     }

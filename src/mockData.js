@@ -5,15 +5,20 @@ const seeded = () => { _seed = (_seed * 1664525 + 1013904223) & 0xffffffff; retu
 const srnd = (min, max) => Math.floor(seeded() * (max - min + 1)) + min
 const spick = (arr) => arr[srnd(0, arr.length - 1)]
 
+// ─── STORAGE KEYS ─────────────────────────────────────────────────────────────
+const STORAGE_KEY_VEHICLES = 'fleet_vehicles_v1'
+const STORAGE_KEY_USERS = 'fleet_users_v1'
+const STORAGE_KEY_GROUPS = 'fleet_groups_v1'
+
 // ─── ASSETS ───────────────────────────────────────────────────────────────────
 const TRUCK_IMAGES = [
-  'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7', // White Scania
-  'https://images.unsplash.com/photo-1586191582056-96fcf2008706', // Yellow Truck
-  'https://images.unsplash.com/photo-1591768793355-74d75b385e80', // Blue Truck
-  'https://images.unsplash.com/photo-1565891741441-64926e441838', // Red Truck
-  'https://images.unsplash.com/photo-1606206591513-ad98a44c7f76', // Grey Scania
-  'https://images.unsplash.com/photo-1501700489910-fb244207186a', // Mercedes Actros
-  'https://images.unsplash.com/photo-1519003300449-424ad040507b', // Volvo FH
+  'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7',
+  'https://images.unsplash.com/photo-1586191582056-96fcf2008706',
+  'https://images.unsplash.com/photo-1591768793355-74d75b385e80',
+  'https://images.unsplash.com/photo-1565891741441-64926e441838',
+  'https://images.unsplash.com/photo-1606206591513-ad98a44c7f76',
+  'https://images.unsplash.com/photo-1501700489910-fb244207186a',
+  'https://images.unsplash.com/photo-1519003300449-424ad040507b',
 ]
 
 const USER_PHOTOS = [
@@ -37,10 +42,28 @@ const vehicleModels = {
   Excavator: ['CAT 320', 'Komatsu PC210', 'JCB JS220']
 }
 const vehicleTypes = ['Truck', 'Van', 'Car', 'Excavator']
-const departments = ['Logistics', 'Operations', 'Maintenance', 'Dispatch', 'Cold Chain']
 
-// ─── USERS ────────────────────────────────────────────────────────────────────
-export const mockUsers = [
+// ─── PERSISTENCE HELPERS ──────────────────────────────────────────────────────
+const saveToStorage = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data))
+  } catch (e) {
+    console.error('Failed to save to localStorage:', e)
+  }
+}
+
+const loadFromStorage = (key) => {
+  try {
+    const saved = localStorage.getItem(key)
+    return saved ? JSON.parse(saved) : null
+  } catch (e) {
+    console.error('Failed to load from localStorage:', e)
+    return null
+  }
+}
+
+// ─── INITIALIZATION ───────────────────────────────────────────────────────────
+const initialUsers = [
   { id: 'usr-001', name: 'Nikolas G.', role: { id: 'admin', name: 'Fleet Director' }, status: 'Active', email: 'nikolas@fleet.com', phone: '+45 20 48 19 01', photo: USER_PHOTOS[0] + '?auto=format&fit=crop&q=80&w=150', department: 'Executive', joinDate: 'Jan 2022' },
   { id: 'usr-002', name: 'Sarah Miller', role: { id: 'dispatcher', name: 'Regional Dispatch' }, status: 'Active', email: 'sarah@fleet.com', phone: '+45 20 48 19 02', photo: USER_PHOTOS[6] + '?auto=format&fit=crop&q=80&w=150', department: 'Dispatch', joinDate: 'Mar 2022' },
   { id: 'usr-003', name: 'Alex Jensen', role: { id: 'driver', name: 'Senior Driver' }, status: 'Active', email: 'alex@fleet.com', phone: '+45 20 48 19 03', photo: USER_PHOTOS[1] + '?auto=format&fit=crop&q=80&w=150', department: 'Logistics', joinDate: 'Feb 2022', performance: 98, compliance: 'Compliant' },
@@ -53,10 +76,8 @@ export const mockUsers = [
   { id: 'usr-010', name: 'Michael Beck', role: { id: 'driver', name: 'Long Haul' }, status: 'Active', email: 'michael@fleet.com', phone: '+45 20 48 19 10', photo: USER_PHOTOS[5] + '?auto=format&fit=crop&q=80&w=150', department: 'Logistics', joinDate: 'Apr 2023', performance: 91, compliance: 'Compliant' },
 ]
 
-// ─── VEHICLES ─────────────────────────────────────────────────────────────────
-const drivers = mockUsers.filter(u => u.role.id === 'driver')
-
-const generateVehicles = () => {
+const generateInitialVehicles = (users) => {
+  const drivers = users.filter(u => u.role.id === 'driver')
   const vehicles = []
   const centerLat = 56.1629, centerLng = 10.2039
 
@@ -81,6 +102,7 @@ const generateVehicles = () => {
       lat: centerLat + (seeded() - 0.5) * 0.15,
       lng: centerLng + (seeded() - 0.5) * 0.25,
       photo,
+      zone: 'Zone A',
       driver: {
         id: driver.id,
         name: driver.name,
@@ -99,36 +121,69 @@ const generateVehicles = () => {
       nextService: `${srnd(500, 5000)} km`,
       alerts: status === 'Maintenance' ? 1 : 0
     })
-
-    // Wire back to driver
-    if (i < drivers.length) {
-      drivers[i].assignedVehicle = id
-    }
   }
   return vehicles
 }
 
-export const mockVehicles = generateVehicles()
+// ─── DATA EXPORTS (HYDRATED) ──────────────────────────────────────────────────
+export let mockUsers = loadFromStorage(STORAGE_KEY_USERS) || initialUsers
+if (!loadFromStorage(STORAGE_KEY_USERS)) saveToStorage(STORAGE_KEY_USERS, mockUsers)
 
-// ─── VEHICLE GROUPS ───────────────────────────────────────────────────────────
-export const mockVehicleGroups = [
+export let mockVehicles = loadFromStorage(STORAGE_KEY_VEHICLES) || generateInitialVehicles(mockUsers)
+if (!loadFromStorage(STORAGE_KEY_VEHICLES)) saveToStorage(STORAGE_KEY_VEHICLES, mockVehicles)
+
+export let mockVehicleGroups = loadFromStorage(STORAGE_KEY_GROUPS) || [
   { id: 'grp-01', name: 'Logistics Fleet', icon: '🚛', color: '#2563EB', count: 18 },
   { id: 'grp-02', name: 'Cold Chain', icon: '❄️', color: '#06B6D4', count: 12 },
   { id: 'grp-03', name: 'Regional Ops', icon: '📍', color: '#10B981', count: 10 },
 ]
+if (!loadFromStorage(STORAGE_KEY_GROUPS)) saveToStorage(STORAGE_KEY_GROUPS, mockVehicleGroups)
 
-// ─── KPI & STATS ──────────────────────────────────────────────────────────────
-export const mockFleetKPIs = {
-  totalAssets: mockVehicles.length,
-  activeNow: mockVehicles.filter(v => v.status !== 'Maintenance').length,
-  moving: mockVehicles.filter(v => v.status === 'Moving').length,
-  resting: mockVehicles.filter(v => v.status === 'Resting').length,
-  maintenance: mockVehicles.filter(v => v.status === 'Maintenance').length,
+// ─── REFRESH STATS HELPER ─────────────────────────────────────────────────────
+export const getFleetKPIs = (vehicles = mockVehicles) => ({
+  totalAssets: vehicles.length,
+  activeNow: vehicles.filter(v => v.status !== 'Maintenance').length,
+  moving: vehicles.filter(v => v.status === 'Moving').length,
+  resting: vehicles.filter(v => v.status === 'Resting').length,
+  maintenance: vehicles.filter(v => v.status === 'Maintenance').length,
   compliance: '94.2%',
   uptime: '98.8%',
   co2Today: '1,240 kg',
+})
+
+// ─── PUBLIC MUTATION API ──────────────────────────────────────────────────────
+export const addVehicle = (vehicle) => {
+  mockVehicles = [vehicle, ...mockVehicles]
+  saveToStorage(STORAGE_KEY_VEHICLES, mockVehicles)
+  return mockVehicles
 }
 
+export const updateVehicle = (id, updates) => {
+  mockVehicles = mockVehicles.map(v => v.id === id ? { ...v, ...updates } : v)
+  saveToStorage(STORAGE_KEY_VEHICLES, mockVehicles)
+  return mockVehicles
+}
+
+export const deleteVehicle = (id) => {
+  mockVehicles = mockVehicles.filter(v => v.id !== id)
+  saveToStorage(STORAGE_KEY_VEHICLES, mockVehicles)
+  return mockVehicles
+}
+
+export const addUser = (user) => {
+  mockUsers = [user, ...mockUsers]
+  saveToStorage(STORAGE_KEY_USERS, mockUsers)
+  return mockUsers
+}
+
+export const updateUser = (id, updates) => {
+  mockUsers = mockUsers.map(u => u.id === id ? { ...u, ...updates } : u)
+  saveToStorage(STORAGE_KEY_USERS, mockUsers)
+  return mockUsers
+}
+
+// ─── STATIC KPI EXPORTS (FOR BACKWARD COMPAT) ─────────────────────────────────
+export const mockFleetKPIs = getFleetKPIs()
 export const mockMonitorStats = [
   { id: 'active', label: 'Active Fleet', value: mockVehicles.filter(v => v.status !== 'Maintenance').length.toString(), sub: 'In Operation', icon: 'Truck', color: '#2563EB', visible: true, trend: '+4%' },
   { id: 'moving', label: 'On Road', value: mockVehicles.filter(v => v.status === 'Moving').length.toString(), sub: 'Moving Assets', icon: 'Activity', color: '#10B981', visible: true, trend: '+12%' },
@@ -137,7 +192,6 @@ export const mockMonitorStats = [
   { id: 'maintenance', label: 'Service', value: mockVehicles.filter(v => v.status === 'Maintenance').length.toString(), sub: 'In Workshop', icon: 'Wrench', color: '#64748B', visible: true },
   { id: 'resting', label: 'Resting', value: mockVehicles.filter(v => v.status === 'Resting').length.toString(), sub: 'Driver Break', icon: 'Coffee', color: '#F59E0B', visible: true },
   { id: 'alerts', label: 'Incidents', value: '3', sub: 'Critical Alerts', icon: 'AlertTriangle', color: '#EF4444', visible: true },
-  { id: 'co2', label: 'CO2 Today', value: '1.2', unit: 'TONS', sub: 'Carbon Footprint', icon: 'Leaf', color: '#059669', visible: false, trend: '-4%' },
 ]
 
 // ─── CHART DATA ───────────────────────────────────────────────────────────────
@@ -146,6 +200,12 @@ export const mockChartData = {
     { h: 'Mon', v: 85 }, { h: 'Tue', v: 92 }, { h: 'Wed', v: 88 },
     { h: 'Thu', v: 94 }, { h: 'Fri', v: 90 }, { h: 'Sat', v: 75 }, { h: 'Sun', v: 70 }
   ],
+  fuelHourly: [
+    { h: '00:00', v: 45 }, { h: '02:00', v: 42 }, { h: '04:00', v: 48 },
+    { h: '06:00', v: 65 }, { h: '08:00', v: 92 }, { h: '10:00', v: 88 },
+    { h: '12:00', v: 95 }, { h: '14:00', v: 91 }, { h: '16:00', v: 84 },
+    { h: '18:00', v: 76 }, { h: '20:00', v: 62 }, { h: '22:00', v: 50 }
+  ],
   performance6mo: [
     { month: 'Jan', performance: 88 }, { month: 'Feb', performance: 90 },
     { month: 'Mar', performance: 92 }, { month: 'Apr', performance: 95 },
@@ -153,27 +213,11 @@ export const mockChartData = {
   ]
 }
 
-// ─── MISC ─────────────────────────────────────────────────────────────────────
 export const mockAlerts = [
   { id: 'ALT-001', type: 'Critical', title: 'Engine Misfire', desc: 'FT-1007 · Mercedes Actros', time: '2m ago', icon: 'AlertTriangle', color: 'red' },
   { id: 'ALT-002', type: 'Warning', title: 'Geofence Breach', desc: 'FT-1012 · Zone B Exit', time: '15m ago', icon: 'MapPin', color: 'amber' },
 ]
 
-export const mockMaintenanceTickets = mockVehicles
-  .filter(v => v.status === 'Maintenance')
-  .map(v => ({
-    id: v.id,
-    name: v.name,
-    type: 'Scheduled Service',
-    due: 'Today',
-    urgency: 'High',
-    progress: 45,
-    tech: 'Robert Holm',
-    cost: '$1,200',
-    location: 'Main Hub'
-  }))
-
-// ─── INVENTORY ────────────────────────────────────────────────────────────────
 export const mockInventory = [
   { label: 'Transmission Kits', qty: '04 Units', status: 'Optimal', stock: 4 },
   { label: 'Hydraulic Pumps', qty: '02 Units', status: 'Low Stock', stock: 2 },
@@ -181,25 +225,20 @@ export const mockInventory = [
   { label: 'Oil Filter Pack', qty: '08 Units', status: 'Optimal', stock: 8 },
 ]
 
-// ─── ROUTES ───────────────────────────────────────────────────────────────────
-export const mockRoutes = [
-  { id: 'RT-001', from: 'Aarhus Hub', to: 'Copenhagen Port', distance: 310, estTime: '3h 20m', type: 'Long Haul', status: 'Active' },
-  { id: 'RT-002', from: 'Odense Depot', to: 'Esbjerg Terminal', distance: 120, estTime: '1h 25m', type: 'Regional', status: 'Active' },
+export const mockMaintenanceTickets = [
+  { id: 'TIC-1024', name: 'Scania R500 #01', type: 'Engine Overhaul', location: 'Main Workshop', cost: '$4,280', due: 'In Progress', progress: 65, urgency: 'High' },
+  { id: 'TIC-1025', name: 'Volvo FH16 #04', type: 'Brake System Update', location: 'Regional Hub', cost: '$1,150', due: 'Tomorrow', progress: 15, urgency: 'Medium' },
+  { id: 'TIC-1028', name: 'Mercedes Actros #12', type: 'Electrical Audit', location: 'Main Workshop', cost: '$850', due: '2 Days Left', progress: 0, urgency: 'Low' },
 ]
 
-// ─── SERVICE HISTORY ──────────────────────────────────────────────────────────
 export const mockServiceHistory = [
-  { id: 'FT-1005', name: 'Scania R500', type: 'Oil Change', date: 'Oct 18', status: 'Completed', cost: '$320', tech: 'Robert Holm' },
-  { id: 'FT-1008', name: 'Volvo FH16', type: 'Tire Rotation', date: 'Oct 14', status: 'Completed', cost: '$180', tech: 'Robert Holm' },
+  { name: 'Volvo FH16 #02', type: 'Full Service', date: '22 Apr 2024', cost: '$2,400' },
+  { name: 'Scania R500 #08', type: 'Hydraulic Repair', date: '20 Apr 2024', cost: '$1,850' },
+  { name: 'MAN TGX #15', type: 'Tire Replacement', date: '18 Apr 2024', cost: '$900' },
 ]
 
-// ─── MECHANICS ────────────────────────────────────────────────────────────────
 export const mockMechanics = [
-  { id: 'mec-01', name: 'Robert Holm', specialty: 'Engine Diagnostics', efficiency: 98, status: 'On Duty', tasks: 3, photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=150' },
-]
-
-// ─── TOP FUEL CONSUMERS ───────────────────────────────────────────────────────
-export const mockTopFuelConsumers = [
-  { rank: 1, id: 'FT-1001', name: 'Scania R500 #1', consumption: 38.2, driver: 'Alex Jensen', type: 'Long Haul', trend: 'up' },
-  { rank: 2, id: 'FT-1004', name: 'Volvo FH16 #4', consumption: 35.7, driver: 'Elena Vance', type: 'Heavy Mach.', trend: 'down' },
+  { name: 'Erik Nielsen', specialty: 'Engine Specialist', status: 'On Duty', efficiency: 98, tasks: 3, photo: 'https://i.pravatar.cc/150?u=erik' },
+  { name: 'Lars Thomsen', specialty: 'Electrical Systems', status: 'In Break', efficiency: 92, tasks: 1, photo: 'https://i.pravatar.cc/150?u=lars' },
+  { name: 'Hans Moller', specialty: 'Hydraulic Expert', status: 'On Duty', efficiency: 95, tasks: 4, photo: 'https://i.pravatar.cc/150?u=hans' },
 ]

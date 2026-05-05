@@ -24,7 +24,19 @@ export const SettingsProvider = ({ children }) => {
       theme: 'light',
       role: 'Dispatcher',
       isEditMode: false,
-      dashboardOrder: ['kpis', 'workspace', 'vehicles']
+      dashboardOrder: ['kpis', 'workspace', 'vehicles'],
+      analyticsRange: '30D',
+      monitorViewMode: 'all',
+      monitorStatsVisibility: {
+        active: true,
+        moving: true,
+        efficiency: true,
+        fuel: true,
+        maintenance: true,
+        resting: true,
+        alerts: true
+      },
+      monitorStatusFilters: ['Moving', 'Resting', 'Idle', 'Maintenance']
     }
     const saved = localStorage.getItem('fleet_settings')
     return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings
@@ -51,8 +63,28 @@ export const SettingsProvider = ({ children }) => {
     setSettings(prev => ({ ...prev, [key]: value }))
   }
 
+  const toggleMonitorStat = (id) => {
+    setSettings(prev => ({
+      ...prev,
+      monitorStatsVisibility: {
+        ...prev.monitorStatsVisibility,
+        [id]: !prev.monitorStatsVisibility[id]
+      }
+    }))
+  }
+
+  const updateMonitorStatusFilters = (filters) => {
+    setSettings(prev => ({ ...prev, monitorStatusFilters: filters }))
+  }
+
   return (
-    <SettingsContext.Provider value={{ settings, toggleSetting, updateSetting }}>
+    <SettingsContext.Provider value={{ 
+      settings, 
+      toggleSetting, 
+      updateSetting, 
+      toggleMonitorStat,
+      updateMonitorStatusFilters
+    }}>
       {children}
     </SettingsContext.Provider>
   )

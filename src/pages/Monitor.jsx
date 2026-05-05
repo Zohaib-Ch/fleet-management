@@ -9,21 +9,32 @@ import MonitorVehiclePanel from '../components/monitor/MonitorVehiclePanel'
 import MonitorMap from '../components/monitor/MonitorMap'
 import MonitorDetailPanel from '../components/monitor/MonitorDetailPanel'
 import MapStatusFilter from '../components/monitor/MapStatusFilter'
+import { useSettings } from '../context/SettingsContext'
 
 // ── Tiny seeded jitter for smooth movement ────────────────────────────────────
 const jitter = (v, range) => v + (Math.random() - 0.5) * range
 
 const Monitor = () => {
+  const { settings, updateSetting, toggleMonitorStat, updateMonitorStatusFilters } = useSettings()
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [stats, setStats] = useState(mockMonitorStats)
   const [showStatsConfig, setShowStatsConfig] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [viewMode, setViewMode] = useState('all')
+  const viewMode = settings.monitorViewMode || 'all'
+  const setViewMode = (val) => updateSetting('monitorViewMode', val)
   const [expandedGroups, setExpandedGroups] = useState(new Set(['grp-01']))
   const [activeGroupFilter, setActiveGroupFilter] = useState(null)
   const [focusedVehicle, setFocusedVehicle] = useState(null)
   const [selectedVehicle, setSelectedVehicle] = useState(null)
-  const [statusFilters, setStatusFilters] = useState(['Moving', 'Resting', 'Idle', 'Maintenance'])
+
+  // Derived stats with visibility from settings
+  const stats = useMemo(() => {
+    return mockMonitorStats.map(s => ({
+      ...s,
+      visible: settings.monitorStatsVisibility[s.id] ?? true
+    }))
+  }, [settings.monitorStatsVisibility])
+
+  const statusFilters = settings.monitorStatusFilters
 
   const [liveVehicles, setLiveVehicles] = useState(() =>
     mockVehicles.map(v => ({ ...v, _heading: Math.random() * 360 }))
@@ -68,14 +79,17 @@ const Monitor = () => {
   }, [liveVehicles])
 
   const handleCloseDetail = useCallback(() => setSelectedVehicle(null), [])
-  const toggleStat = useCallback((id) => setStats(prev => prev.map(s => s.id === id ? { ...s, visible: !s.visible } : s)), [])
+  const toggleStat = useCallback((id) => toggleMonitorStat(id), [toggleMonitorStat])
   const toggleGroup = useCallback((groupId) => setExpandedGroups(prev => { const n = new Set(prev); n.has(groupId) ? n.delete(groupId) : n.add(groupId); return n }), [])
 
   const handleToggleStatus = useCallback((statusId) => {
-    if (statusId === 'ALL') setStatusFilters(['Moving', 'Resting', 'Idle', 'Maintenance'])
-    else if (statusId === 'NONE') setStatusFilters([])
-    else setStatusFilters(prev => prev.includes(statusId) ? prev.filter(s => s !== statusId) : [...prev, statusId])
-  }, [])
+    let nextFilters = []
+    if (statusId === 'ALL') nextFilters = ['Moving', 'Resting', 'Idle', 'Maintenance']
+    else if (statusId === 'NONE') nextFilters = []
+    else nextFilters = statusFilters.includes(statusId) ? statusFilters.filter(s => s !== statusId) : [...statusFilters, statusId]
+    
+    updateMonitorStatusFilters(nextFilters)
+  }, [statusFilters, updateMonitorStatusFilters])
 
   const filteredVehicles = useMemo(() => liveVehicles.filter(v => {
     const q = searchQuery.toLowerCase()

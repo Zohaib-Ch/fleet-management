@@ -47,9 +47,11 @@ const MetricCard = ({ label, value, trend, icon: Icon, color, delay }) => (
 )
 
 const Dashboard = () => {
-  const [activeRange, setActiveRange] = useState('30D')
-  const { settings } = useSettings()
+  const { settings, updateSetting } = useSettings()
+  const activeRange = settings.analyticsRange || '30D'
   const isDark = settings.theme === 'dark'
+  
+  const setActiveRange = (val) => updateSetting('analyticsRange', val)
   
   const chartColors = {
     primary: '#2563eb',

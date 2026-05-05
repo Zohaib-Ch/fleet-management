@@ -8,7 +8,7 @@ import {
   Flag, Navigation, Plus, UserPlus, X, ChevronRight,
   Search, Shield, Battery, MoreVertical
 } from 'lucide-react'
-import { mockVehicles } from '../mockData'
+import { mockVehicles, addVehicle } from '../mockData'
 import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
 import VehicleListPanel from '../components/vehicles/VehicleListPanel'
@@ -53,6 +53,7 @@ const SectionLabel = ({ children }) => <p className="text-[10px] font-black text
 const VehiclesPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const [vehicles, setVehicles] = useState(mockVehicles)
   const [searchQuery, setSearchQuery] = useState('')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
@@ -60,19 +61,25 @@ const VehiclesPage = () => {
   const queryId = queryParams.get('id')
 
   const [selectedVehicle, setSelectedVehicle] = useState(() => {
-    return mockVehicles.find(v => v.id === queryId) || mockVehicles[0]
+    return vehicles.find(v => v.id === queryId) || vehicles[0]
   })
 
   useEffect(() => {
     if (queryId) {
-      const v = mockVehicles.find(x => x.id === queryId)
+      const v = vehicles.find(x => x.id === queryId)
       if (v) setSelectedVehicle(v)
     }
-  }, [queryId])
+  }, [queryId, vehicles])
 
   const handleVehicleSelect = (v) => {
     setSelectedVehicle(v)
     navigate(`/vehicles?id=${v.id}`, { replace: true })
+  }
+
+  const handleAddVehicle = (newVehicle) => {
+    const updated = addVehicle(newVehicle)
+    setVehicles([...updated])
+    toast.success('Asset added to fleet')
   }
 
   const v = selectedVehicle
@@ -96,7 +103,7 @@ const VehiclesPage = () => {
             </div>
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fleet Inventory</p>
-              <p className="text-xl font-black text-slate-800 leading-none">{mockVehicles.length} <span className="text-xs text-slate-400 font-bold ml-1">Active Assets</span></p>
+              <p className="text-xl font-black text-slate-800 leading-none">{vehicles.length} <span className="text-xs text-slate-400 font-bold ml-1">Active Assets</span></p>
             </div>
             <div className="ml-auto flex gap-4 pr-4">
               <div className="text-right">
@@ -121,7 +128,7 @@ const VehiclesPage = () => {
 
           {/* Left Panel: Vehicle List */}
           <VehicleListPanel
-            vehicles={mockVehicles}
+            vehicles={vehicles}
             selectedVehicle={v}
             onVehicleSelect={handleVehicleSelect}
             searchQuery={searchQuery}
@@ -301,7 +308,7 @@ const VehiclesPage = () => {
       <AddVehicleModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAdd={(v) => toast.success('Asset added to fleet')}
+        onAdd={handleAddVehicle}
       />
     </div>
   )
