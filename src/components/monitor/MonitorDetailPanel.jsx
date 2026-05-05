@@ -6,7 +6,7 @@ import {
   Activity, Bell, ClipboardCheck, ArrowRight, Fuel, Gauge,
   Timer, Zap, Thermometer, Droplets, Navigation, Clock, ShieldCheck
 } from 'lucide-react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, PieChart, Pie } from 'recharts'
 import toast from 'react-hot-toast'
 
 // ── Animated Number Counter ──────────────────────────────────────────────────
@@ -70,7 +70,7 @@ const ProgressBar = ({ label, value, color = "bg-blue-500", icon: Icon, keyId })
 )
 
 const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
-  const [moduleOrder, setModuleOrder] = useState(['hero_card', 'stats_strip', 'telemetry_grid', 'fuel_utilization', 'recent_trips', 'mid_grid'])
+  const [moduleOrder, setModuleOrder] = useState(['hero_card', 'stats_strip', 'telemetry_grid', 'fiscal_performance', 'expense_distribution', 'quarterly_utilization', 'fuel_utilization', 'recent_trips', 'mid_grid'])
 
   if (!v) return null
 
@@ -83,6 +83,30 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
   const tripData = [
     { id: 'T-102', from: 'København', to: 'Aarhus', time: '2h 15m', status: 'Completed', dist: '187km' },
     { id: 'T-101', from: 'Odense', to: 'København', time: '1h 45m', status: 'Completed', dist: '165km' }
+  ]
+
+  const fiscalData = [
+    { m: 'Jan', current: 14000, prev: 12000 }, { m: 'Feb', current: 12000, prev: 11000 },
+    { m: 'Mar', current: 8500, prev: 7000 }, { m: 'Apr', current: 13500, prev: 13000 },
+    { m: 'May', current: 10500, prev: 14000 }, { m: 'Jun', current: 10500, prev: 11000 },
+    { m: 'Jul', current: 11500, prev: 12000 }, { m: 'Aug', current: 12000, prev: 9000 },
+    { m: 'Sep', current: 11500, prev: 12500 }, { m: 'Oct', current: 11800, prev: 12000 },
+    { m: 'Nov', current: 11000, prev: 12200 }, { m: 'Dec', current: 14500, prev: 13500 },
+  ]
+
+  const expenseCategories = [
+    { name: 'Fuel', value: 62, color: '#0EA5E9' },
+    { name: 'Maintenance', value: 21, color: '#10B981' },
+    { name: 'Insurance', value: 7, color: '#F59E0B' },
+    { name: 'Parts', value: 6, color: '#6366F1' },
+    { name: 'Others', value: 4, color: '#94A3B8' },
+  ]
+
+  const quarterlyUtilization = [
+    { q: 'Q1', drive: 6000, idle: 2000, park: 1500 },
+    { q: 'Q2', drive: 7500, idle: 1500, park: 1000 },
+    { q: 'Q3', drive: 4000, idle: 2500, park: 2000 },
+    { q: 'Q4', drive: 9000, idle: 1000, park: 500 },
   ]
 
   const renderModule = (id) => {
@@ -121,8 +145,8 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
               { l: 'Fuel Level', v: v.vitals?.fuel || 0, s: '%' },
               { l: 'Engine Load', v: v.vitals?.engineLoad || 0, s: '%' }
             ].map(s => (
-              <div key={s.l} className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col items-center">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{s.l}</p>
+              <div key={s.l} className="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm flex flex-col items-center justify-center min-h-[70px]">
+                <p className="text-[8px] font-black text-slate-400 uppercase tracking-tight mb-1.5 whitespace-nowrap">{s.l}</p>
                 <p className="text-lg font-black text-slate-800"><Counter value={s.v} suffix={s.s} keyId={v.id} /></p>
               </div>
             ))}
@@ -179,6 +203,112 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
                 </motion.div>
               ))}
             </div>
+          </Reorder.Item>
+        )
+      case 'fiscal_performance':
+        return (
+          <Reorder.Item key="fiscal_performance" value="fiscal_performance" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 overflow-hidden">
+             <div className="flex items-center justify-between mb-6">
+                <div>
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fiscal Performance</p>
+                   <p className="text-xs font-bold text-slate-400 italic">Maintenance vs Fuel Costs (12mo)</p>
+                </div>
+                <div className="flex gap-4">
+                   <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-blue-500" />
+                      <span className="text-[9px] font-black text-slate-500 uppercase">2024</span>
+                   </div>
+                   <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-slate-200" />
+                      <span className="text-[9px] font-black text-slate-500 uppercase">2023</span>
+                   </div>
+                </div>
+             </div>
+             <div className="h-40 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                   <BarChart data={fiscalData}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                      <XAxis dataKey="m" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: '#94A3B8' }} />
+                      <Tooltip 
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
+                        itemStyle={{ fontSize: '10px', fontWeight: 900 }}
+                      />
+                      <Bar dataKey="prev" fill="#E2E8F0" radius={[2, 2, 0, 0]} />
+                      <Bar dataKey="current" fill="#3B82F6" radius={[2, 2, 0, 0]} />
+                   </BarChart>
+                </ResponsiveContainer>
+             </div>
+          </Reorder.Item>
+        )
+      case 'expense_distribution':
+        return (
+          <Reorder.Item key="expense_distribution" value="expense_distribution" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expense Allocation</p>
+             <div className="flex items-center gap-4">
+                <div className="w-44 h-44 shrink-0 relative">
+                   <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                         <Pie
+                           data={expenseCategories}
+                           cx="50%"
+                           cy="50%"
+                           innerRadius={45}
+                           outerRadius={65}
+                           paddingAngle={5}
+                           dataKey="value"
+                           stroke="none"
+                         >
+                            {expenseCategories.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                         </Pie>
+                         <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                      </PieChart>
+                   </ResponsiveContainer>
+                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      <p className="text-xl font-black text-slate-800 leading-none">62%</p>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-1">Fuel</p>
+                   </div>
+                </div>
+                <div className="flex-1 space-y-3.5">
+                   {expenseCategories.map(cat => (
+                     <div key={cat.name} className="flex items-center justify-between group">
+                        <div className="flex items-center gap-2.5">
+                           <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: cat.color }} />
+                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide group-hover:text-slate-800 transition-colors">{cat.name}</span>
+                        </div>
+                        <span className="text-[11px] font-black text-slate-800">{cat.value}%</span>
+                     </div>
+                   ))}
+                </div>
+             </div>
+          </Reorder.Item>
+        )
+      case 'quarterly_utilization':
+        return (
+          <Reorder.Item key="quarterly_utilization" value="quarterly_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Quarterly Operational Hours</p>
+             <div className="h-40 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                   <BarChart layout="vertical" data={quarterlyUtilization}>
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F1F5F9" />
+                      <XAxis type="number" hide />
+                      <YAxis dataKey="q" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#64748B' }} />
+                      <Tooltip cursor={{ fill: '#F8FAFC' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                      <Bar dataKey="drive" stackId="a" fill="#0369A1" radius={[0, 0, 0, 0]} barSize={20} />
+                      <Bar dataKey="idle" stackId="a" fill="#0EA5E9" />
+                      <Bar dataKey="park" stackId="a" fill="#7DD3FC" radius={[0, 4, 4, 0]} />
+                   </BarChart>
+                </ResponsiveContainer>
+             </div>
+             <div className="mt-4 flex gap-6 justify-center">
+                {[{ l: 'Driving', c: '#0369A1' }, { l: 'Idle', c: '#0EA5E9' }, { l: 'Parked', c: '#7DD3FC' }].map(i => (
+                  <div key={i.l} className="flex items-center gap-1.5">
+                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: i.c }} />
+                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{i.l}</span>
+                  </div>
+                ))}
+             </div>
           </Reorder.Item>
         )
       case 'mid_grid':
