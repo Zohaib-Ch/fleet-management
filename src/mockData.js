@@ -79,28 +79,27 @@ const initialUsers = [
 const generateInitialVehicles = (users) => {
   const drivers = users.filter(u => u.role.id === 'driver')
   const vehicles = []
-  const centerLat = 56.1629, centerLng = 10.2039
+    const centerLat = 56.1629, centerLng = 10.1439 // Shifted slightly west to avoid water
+    for (let i = 0; i < 40; i++) {
+      const driver = drivers[i % drivers.length]
+      const type = vehicleTypes[i % vehicleTypes.length]
+      const modelsForType = vehicleModels[type]
+      const model = modelsForType[i % modelsForType.length]
+      const status = i % 4 === 0 ? 'Resting' : i % 7 === 0 ? 'Maintenance' : 'Moving'
+      const id = `${type.substring(0, 2).toUpperCase()}-${1000 + i}`
+      const photo = TRUCK_IMAGES[i % TRUCK_IMAGES.length] + '?auto=format&fit=crop&q=80&w=800'
 
-  for (let i = 0; i < 40; i++) {
-    const driver = drivers[i % drivers.length]
-    const type = vehicleTypes[i % vehicleTypes.length]
-    const modelsForType = vehicleModels[type]
-    const model = modelsForType[i % modelsForType.length]
-    const status = i % 4 === 0 ? 'Resting' : i % 7 === 0 ? 'Maintenance' : 'Moving'
-    const id = `${type.substring(0, 2).toUpperCase()}-${1000 + i}`
-    const photo = TRUCK_IMAGES[i % TRUCK_IMAGES.length] + '?auto=format&fit=crop&q=80&w=800'
-
-    vehicles.push({
-      id,
-      name: `${model} #${i + 1}`,
-      model,
-      type,
-      plate: `DK ${srnd(10000, 99999)}`,
-      year: srnd(2020, 2024),
-      status,
-      speed: status === 'Moving' ? srnd(45, 88) : 0,
-      lat: centerLat + (seeded() - 0.5) * 0.15,
-      lng: centerLng + (seeded() - 0.5) * 0.25,
+      vehicles.push({
+        id,
+        name: `${model} #${i + 1}`,
+        model,
+        type,
+        plate: `DK ${srnd(10000, 99999)}`,
+        year: srnd(2020, 2024),
+        status,
+        speed: status === 'Moving' ? srnd(45, 88) : 0,
+        lat: centerLat + (seeded() - 0.5) * 0.08, // Tightened
+        lng: centerLng + (seeded() - 0.5) * 0.1,  // Tightened
       photo,
       zone: 'Zone A',
       driver: {

@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react'
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet'
+import React, { useEffect, useRef, useMemo, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -62,97 +61,103 @@ const createMarkerIcon = (status, isFocused, isSelected, type) => {
   })
 }
 
-// ── Suppress map double-click zoom ──────────────────────────────────────────
-const DisableDoubleClickZoom = () => {
-  const map = useMapEvents({
-    dblclick: (e) => {
-      e.originalEvent.preventDefault()
-      e.originalEvent.stopPropagation()
-    }
-  })
-  useEffect(() => { map.doubleClickZoom.disable() }, [map])
-  return null
-}
-
-// ── Map controller — pans to focused vehicle ──────────────────────────────────
-const MapController = ({ focusedVehicle }) => {
-  const map = useMap()
-  useEffect(() => {
-    if (focusedVehicle?.lat && focusedVehicle?.lng) {
-      map.flyTo([focusedVehicle.lat, focusedVehicle.lng], 14, { duration: 0.8 })
-    }
-  }, [focusedVehicle, map])
-  return null
-}
-
-// ── Hover tooltip popup ───────────────────────────────────────────────────────
 const VehicleTooltipContent = ({ v }) => `
   <div style="font-family:Inter,sans-serif;min-width:160px">
     <div style="font-weight:700;font-size:12px;color:#1e293b;margin-bottom:2px">${v.name}</div>
     <div style="font-size:10px;color:#64748b;margin-bottom:6px">${v.id} · ${v.plate}</div>
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-      <span style="font-size:10px;color:#64748b">Driver:</span>
-      <span style="font-size:10px;font-weight:600;color:#1e293b">${v.driver?.name || '—'}</span>
-    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">Driver: <span style="font-weight:600;color:#1e293b">${v.driver?.name || '—'}</span></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
       <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;background:${v.status==='Moving'?'#d1fae5':'#fef3c7'};color:${v.status==='Moving'?'#065f46':'#92400e'}">${v.status}</span>
-      ${v.speed > 0 ? `<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;background:#eff6ff;color:#1d4ed8">${v.speed} km/h</span>` : ''}
-      ${v.vitals?.fuel !== undefined ? `<span style="font-size:9px;padding:2px 6px;border-radius:5px;background:#f8fafc;color:#64748b">⛽ ${v.vitals.fuel}%</span>` : ''}
     </div>
-    <p style="font-size:9px;color:#94a3b8;margin-top:6px">Double-click for full details</p>
   </div>
 `
 
-// ── Main map component ────────────────────────────────────────────────────────
-const MonitorMap = ({ vehicles, focusedVehicle, selectedVehicle, onSingleClick, onDoubleClick }) => {
-  const center = [56.1629, 10.2039]
+const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSingleClick, onDoubleClick }) => {
+  const mapRef = useRef(null)
+  const [map, setMap] = useState(null)
   const markersRef = useRef({})
+  const center = [56.1629, 10.2039]
 
-  return (
-    <MapContainer
-      center={center}
-      zoom={9}
-      style={{ width: '100%', height: '100%' }}
-      doubleClickZoom={false}
-      zoomControl={false}
-    >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-        maxZoom={19}
-      />
+  // Initialize Map
+  useEffect(() => {
+    if (!mapRef.current) return
 
-      <DisableDoubleClickZoom />
-      <MapController focusedVehicle={focusedVehicle} />
+    const bounds = L.latLngBounds([55.5, 8.0], [57.5, 12.5])
+    const instance = L.map(mapRef.current, {
+      center: center,
+      zoom: 10,
+      minZoom: 9,
+      maxBounds: bounds,
+      maxBoundsViscosity: 1.0,
+      zoomControl: false,
+      doubleClickZoom: false,
+      attributionControl: false
+    })
 
-      {vehicles.slice(0, 120).map(v => {
-        const isFocused  = focusedVehicle?.id  === v.id
-        const isSelected = selectedVehicle?.id === v.id
-        const icon = createMarkerIcon(v.status, isFocused, isSelected, v.type)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(instance)
 
-        return (
-          <Marker
-            key={v.id}
-            position={[v.lat, v.lng]}
-            icon={icon}
-            eventHandlers={{
-              click:     () => onSingleClick(v),
-              dblclick:  () => onDoubleClick(v),
-              mouseover: (e) => {
-                e.target.bindTooltip(VehicleTooltipContent({ v }), {
-                  direction: 'top',
-                  offset: [0, -16],
-                  className: 'monitor-tooltip',
-                  permanent: false,
-                }).openTooltip()
-              },
-              mouseout: (e) => e.target.closeTooltip(),
-            }}
-          />
-        )
-      })}
-    </MapContainer>
-  )
-}
+    setMap(instance)
+
+    return () => {
+      instance.remove()
+      setMap(null)
+      markersRef.current = {}
+    }
+  }, []) // Initialize once
+
+  // Sync Markers
+  useEffect(() => {
+    if (!map) return
+
+    const newMarkers = {}
+
+    vehicles.slice(0, 120).forEach(v => {
+      const isFocused  = focusedVehicle?.id  === v.id
+      const isSelected = selectedVehicle?.id === v.id
+      const icon = createMarkerIcon(v.status, isFocused, isSelected, v.type)
+
+      let marker = markersRef.current[v.id]
+      if (marker) {
+        marker.setLatLng([v.lat, v.lng])
+        marker.setIcon(icon)
+      } else {
+        marker = L.marker([v.lat, v.lng], { icon })
+          .on('click', () => onSingleClick(v))
+          .on('dblclick', () => onDoubleClick(v))
+          .on('mouseover', (e) => {
+             e.target.bindTooltip(VehicleTooltipContent({ v }), {
+               direction: 'top',
+               offset: [0, -16],
+               className: 'monitor-tooltip',
+               permanent: false,
+             }).openTooltip()
+          })
+          .on('mouseout', (e) => e.target.closeTooltip())
+          .addTo(map)
+      }
+      newMarkers[v.id] = marker
+    })
+
+    // Remove old markers
+    Object.keys(markersRef.current).forEach(id => {
+      if (!newMarkers[id]) {
+        markersRef.current[id].remove()
+      }
+    })
+
+    markersRef.current = newMarkers
+  }, [map, vehicles, focusedVehicle, selectedVehicle, onSingleClick, onDoubleClick])
+
+  // Sync Focus Pan
+  useEffect(() => {
+    if (map && focusedVehicle?.lat && focusedVehicle?.lng) {
+      map.flyTo([focusedVehicle.lat, focusedVehicle.lng], 14, { duration: 0.8 })
+    }
+  }, [map, focusedVehicle])
+
+  return <div ref={mapRef} className="w-full h-full bg-slate-50" />
+})
 
 export default MonitorMap

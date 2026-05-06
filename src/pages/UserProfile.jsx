@@ -6,7 +6,7 @@ import {
   Calendar, Clock, Activity, Award, Briefcase, 
   Settings, ChevronRight, MessageSquare, ShieldAlert,
   Zap, Bell, CheckCircle2, TrendingUp, UserCheck, Truck,
-  Users, UserPlus
+  Users, UserPlus, BarChart3
 } from 'lucide-react'
 import { mockUsers } from '../mockData'
 import Sidebar from '../components/Sidebar'
@@ -165,6 +165,10 @@ const UserProfile = () => {
                     </div>
 
                     <div className="flex gap-2 shrink-0">
+                      <button onClick={() => navigate(`/reports?userId=${u.id}`)} 
+                        className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-xl text-xs font-bold text-white flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20">
+                        <BarChart3 className="w-3.5 h-3.5" />Get Report
+                      </button>
                       <button onClick={() => toast.success('Profile permissions updated')} 
                         className="px-4 py-2.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-xl text-xs font-bold text-white flex items-center gap-2 transition-all">
                         <Settings className="w-3.5 h-3.5" />Manage

@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Maximize2, Minimize2 } from 'lucide-react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import { AnimatePresence, motion, useDragControls } from 'framer-motion'
+import { Maximize2, Minimize2, GripVertical, ChevronLeft, ChevronRight } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
 import { mockVehicles, mockVehicleGroups, mockMonitorStats } from '../mockData'
@@ -26,6 +26,30 @@ const Monitor = () => {
   const [focusedVehicle, setFocusedVehicle] = useState(null)
   const [selectedVehicle, setSelectedVehicle] = useState(null)
 
+  // Customizable Dashboard Order - Stable Layout logic
+  const [dashboardOrder, setDashboardOrder] = useState(() => {
+    const saved = localStorage.getItem('fleet_monitor_layout_v1')
+    return saved ? JSON.parse(saved) : ['fleet_list', 'map_view', 'detail_panel']
+  })
+
+  // Persistence
+  useEffect(() => {
+    localStorage.setItem('fleet_monitor_layout_v1', JSON.stringify(dashboardOrder))
+  }, [dashboardOrder])
+
+  // Simple reordering logic for Flexbox Order
+  const moveItem = (id, direction) => {
+    const currentIndex = dashboardOrder.indexOf(id)
+    const newIndex = currentIndex + direction
+    if (newIndex < 0 || newIndex >= dashboardOrder.length) return
+
+    const newOrder = [...dashboardOrder]
+    const temp = newOrder[currentIndex]
+    newOrder[currentIndex] = newOrder[newIndex]
+    newOrder[newIndex] = temp
+    setDashboardOrder(newOrder)
+  }
+
   // Derived stats with visibility from settings
   const stats = useMemo(() => {
     return mockMonitorStats.map(s => ({
@@ -50,8 +74,8 @@ const Monitor = () => {
         return {
           ...v,
           _heading: heading,
-          lat: Math.max(55.5, Math.min(57.0, v.lat + Math.cos(rad) * step)),
-          lng: Math.max(8.0, Math.min(12.5, v.lng + Math.sin(rad) * step)),
+          lat: Math.max(55.8, Math.min(56.5, v.lat + Math.cos(rad) * step)),
+          lng: Math.max(9.5, Math.min(10.18, v.lng + Math.sin(rad) * step)),
           speed: Number(Math.max(28, Math.min(98, v.speed + jitter(0, 6))).toFixed(1)),
         }
       }))
@@ -87,7 +111,7 @@ const Monitor = () => {
     if (statusId === 'ALL') nextFilters = ['Moving', 'Resting', 'Idle', 'Maintenance']
     else if (statusId === 'NONE') nextFilters = []
     else nextFilters = statusFilters.includes(statusId) ? statusFilters.filter(s => s !== statusId) : [...statusFilters, statusId]
-    
+
     updateMonitorStatusFilters(nextFilters)
   }, [statusFilters, updateMonitorStatusFilters])
 
@@ -117,10 +141,28 @@ const Monitor = () => {
           </motion.div>
         )}
 
-        <div className="flex-1 flex gap-3 overflow-hidden min-h-0 relative">
+        <div className="flex-1 flex gap-3 overflow-hidden relative">
+          {/* Dashboard Components - Fixed in DOM, Ordered by CSS */}
+
+          {/* 1. Fleet List Panel */}
           <AnimatePresence>
             {!isFullscreen && (
-              <motion.div initial={{ x: -400, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -400, opacity: 0 }} transition={{ type: 'spring', damping: 30 }} className="h-full">
+              <motion.div
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+                style={{ order: dashboardOrder.indexOf('fleet_list') }}
+                className="h-full shrink-0 relative group/panel"
+              >
+                {/* Visual Order Controls */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-1 opacity-0 group-hover/panel:opacity-100 transition-opacity">
+                  <button onClick={() => moveItem('fleet_list', -1)} className="p-1 bg-white rounded-md shadow-sm hover:bg-slate-50 text-slate-400"><ChevronLeft className="w-3 h-3" /></button>
+                  <div className="px-2 py-1 bg-white rounded-md shadow-sm cursor-grab active:cursor-grabbing"><GripVertical className="w-3 h-3 text-slate-300" /></div>
+                  <button onClick={() => moveItem('fleet_list', 1)} className="p-1 bg-white rounded-md shadow-sm hover:bg-slate-50 text-slate-400"><ChevronRight className="w-3 h-3" /></button>
+                </div>
+
                 <MonitorVehiclePanel
                   vehicles={filteredVehicles}
                   allVehicles={liveVehicles}
@@ -142,37 +184,72 @@ const Monitor = () => {
             )}
           </AnimatePresence>
 
-          <div className={`flex-1 relative overflow-hidden transition-all duration-500 ${isFullscreen ? 'rounded-0 border-0' : 'rounded-2xl shadow-premium border border-white/70'}`}>
-            <MonitorMap
-              vehicles={filteredVehicles}
-              focusedVehicle={focusedVehicle}
-              selectedVehicle={selectedVehicle}
-              onSingleClick={handleSingleClick}
-              onDoubleClick={handleDoubleClick}
-            />
+          {/* 2. Map View Container */}
+          <motion.div
+            layout
+            transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+            style={{ order: dashboardOrder.indexOf('map_view') }}
+            className={`flex-1 relative overflow-hidden transition-all duration-500 group/map ${isFullscreen ? 'rounded-0 border-0' : 'rounded-2xl shadow-premium border border-white/70'}`}
+          >
+            {/* Visual Order Controls */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1001] flex items-center gap-1 opacity-0 group-hover/map:opacity-100 transition-opacity">
+              <button onClick={() => moveItem('map_view', -1)} className="p-2 bg-white/90 backdrop-blur-md rounded-lg shadow-premium border border-white/50 text-slate-400 hover:text-blue-600"><ChevronLeft className="w-4 h-4" /></button>
+              <div className="px-4 py-2 bg-white/90 backdrop-blur-md rounded-lg shadow-premium border border-white/50 flex items-center gap-2 cursor-grab active:cursor-grabbing">
+                <GripVertical className="w-4 h-4 text-slate-300" />
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Layout</span>
+              </div>
+              <button onClick={() => moveItem('map_view', 1)} className="p-2 bg-white/90 backdrop-blur-md rounded-lg shadow-premium border border-white/50 text-slate-400 hover:text-blue-600"><ChevronRight className="w-4 h-4" /></button>
+            </div>
 
-            {/* Fullscreen/Expand Toggle Button */}
-            <button
-              onClick={() => setIsFullscreen(!isFullscreen)}
-              className="absolute bottom-24 right-4 z-[1000] w-10 h-10 bg-white rounded-xl shadow-premium flex items-center justify-center text-slate-500 hover:text-blue-600 hover:scale-110 active:scale-95 transition-all border border-white/50"
-              title={isFullscreen ? "Exit Fullscreen" : "Expand Map"}
-            >
-              {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
-            </button>
+            <div className="w-full h-full relative">
+              <MonitorMap
+                vehicles={filteredVehicles}
+                focusedVehicle={focusedVehicle}
+                selectedVehicle={selectedVehicle}
+                onSingleClick={handleSingleClick}
+                onDoubleClick={handleDoubleClick}
+              />
 
-            <MapStatusFilter
-              activeStatuses={statusFilters}
-              onToggleStatus={handleToggleStatus}
-            />
+              {/* Fullscreen/Expand Toggle Button */}
+              <button
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                className="absolute bottom-24 right-4 z-[1000] w-10 h-10 bg-white rounded-xl shadow-premium flex items-center justify-center text-slate-500 hover:text-blue-600 hover:scale-110 active:scale-95 transition-all border border-white/50"
+                title={isFullscreen ? "Exit Fullscreen" : "Expand Map"}
+              >
+                {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+              </button>
 
-          </div>
+              <MapStatusFilter
+                activeStatuses={statusFilters}
+                onToggleStatus={handleToggleStatus}
+              />
+            </div>
+          </motion.div>
 
+          {/* 3. Detail Panel Container */}
           <AnimatePresence>
             {selectedVehicle && (
-              <MonitorDetailPanel
-                vehicle={selectedVehicle}
-                onClose={handleCloseDetail}
-              />
+              <motion.div
+                layout
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50 }}
+                transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+                style={{ order: dashboardOrder.indexOf('detail_panel') }}
+                className="h-full shrink-0 relative group/detail"
+              >
+                {/* Visual Order Controls */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-1 opacity-0 group-hover/detail:opacity-100 transition-opacity">
+                  <button onClick={() => moveItem('detail_panel', -1)} className="p-1 bg-white rounded-md shadow-sm hover:bg-slate-50 text-slate-400"><ChevronLeft className="w-3 h-3" /></button>
+                  <div className="px-2 py-1 bg-white rounded-md shadow-sm cursor-grab active:cursor-grabbing"><GripVertical className="w-3 h-3 text-slate-300" /></div>
+                  <button onClick={() => moveItem('detail_panel', 1)} className="p-1 bg-white rounded-md shadow-sm hover:bg-slate-50 text-slate-400"><ChevronRight className="w-3 h-3" /></button>
+                </div>
+
+                <MonitorDetailPanel
+                  vehicle={selectedVehicle}
+                  onClose={handleCloseDetail}
+                />
+              </motion.div>
             )}
           </AnimatePresence>
         </div>

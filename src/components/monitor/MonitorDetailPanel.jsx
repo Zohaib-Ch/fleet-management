@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion, Reorder, AnimatePresence, useSpring, useTransform, animate } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import {
   X, Truck, MapPin, AlertTriangle, Wrench, Calendar, MousePointer2,
   RefreshCw, GripVertical, ChevronRight, LayoutDashboard, Car,
@@ -69,8 +70,9 @@ const ProgressBar = ({ label, value, color = "bg-blue-500", icon: Icon, keyId })
   </div>
 )
 
-const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
-  const [moduleOrder, setModuleOrder] = useState(['hero_card', 'stats_strip', 'telemetry_grid', 'fiscal_performance', 'expense_distribution', 'quarterly_utilization', 'fuel_utilization', 'recent_trips', 'mid_grid'])
+const MonitorDetailPanel = ({ vehicle: v, onClose, dragControls }) => {
+  const navigate = useNavigate()
+  const [moduleOrder, setModuleOrder] = useState(['driver_profile', 'hero_card', 'stats_strip', 'telemetry_grid', 'fiscal_performance', 'expense_distribution', 'quarterly_utilization', 'fuel_utilization', 'recent_trips', 'mid_grid'])
 
   if (!v) return null
 
@@ -111,10 +113,38 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
 
   const renderModule = (id) => {
     switch (id) {
+      case 'driver_profile':
+        return (
+          <Reorder.Item key="driver_profile" value="driver_profile" className="mb-4">
+            <motion.div 
+              onClick={() => navigate(`/profile/${v.driver.id}`)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm flex items-center gap-4 cursor-pointer hover:border-blue-200 transition-all group/driver"
+            >
+              <div className="relative">
+                <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-md">
+                  <img src={v.driver?.photo} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Assigned Driver</p>
+                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover/driver:text-blue-500 transform group-hover/driver:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-base font-black text-slate-800 mt-1 leading-none">{v.driver?.name}</h3>
+                <p className="text-[11px] font-bold text-slate-400 mt-1">{v.driver?.role || 'Senior Driver'}</p>
+              </div>
+            </motion.div>
+          </Reorder.Item>
+        )
       case 'hero_card':
         return (
-          <Reorder.Item key="hero_card" value="hero_card" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm relative group/hero mb-4">
-            <GripVertical className="absolute top-4 right-4 w-3 h-3 text-slate-100 opacity-0 group-hover/hero:opacity-100 cursor-grab transition-opacity" />
+          <Reorder.Item key="hero_card" value="hero_card" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm relative group/hero mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
+            <GripVertical className="absolute top-4 right-4 w-3 h-3 text-slate-100 opacity-0 group-hover/hero:opacity-100 cursor-grab active:cursor-grabbing transition-opacity" />
             <div className="flex items-start gap-6">
               <motion.div key={v.id} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="w-32 h-24 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shrink-0 shadow-sm">
                 <img src={v.photo || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=300"} alt="" className="w-full h-full object-cover" />
@@ -138,7 +168,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'stats_strip':
         return (
-          <Reorder.Item key="stats_strip" value="stats_strip" className="grid grid-cols-4 gap-3 mb-4">
+          <Reorder.Item key="stats_strip" value="stats_strip" className="grid grid-cols-4 gap-3 mb-4 cursor-grab active:cursor-grabbing">
             {[
               { l: 'Odometer', v: v.odometer || 0, s: 'km' },
               { l: 'Efficiency', v: 92, s: '%' },
@@ -154,7 +184,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'telemetry_grid':
         return (
-          <Reorder.Item key="telemetry_grid" value="telemetry_grid" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
+          <Reorder.Item key="telemetry_grid" value="telemetry_grid" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
             <div className="grid grid-cols-2 gap-x-8 gap-y-6">
               <ProgressBar label="Engine Load" value={v.vitals?.engineLoad || 0} color="bg-emerald-500" icon={Zap} keyId={v.id} />
               <ProgressBar label="Fuel Level" value={v.vitals?.fuel || 0} color="bg-blue-500" icon={Fuel} keyId={v.id} />
@@ -165,7 +195,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'fuel_utilization':
         return (
-          <Reorder.Item key="fuel_utilization" value="fuel_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
+          <Reorder.Item key="fuel_utilization" value="fuel_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Weekly Utilization</p>
               <Fuel className="w-4 h-4 text-blue-500" />
@@ -185,7 +215,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'recent_trips':
         return (
-          <Reorder.Item key="recent_trips" value="recent_trips" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
+          <Reorder.Item key="recent_trips" value="recent_trips" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Recent Trips</p>
             <div className="space-y-4">
               {tripData.map((trip, i) => (
@@ -207,7 +237,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'fiscal_performance':
         return (
-          <Reorder.Item key="fiscal_performance" value="fiscal_performance" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 overflow-hidden">
+          <Reorder.Item key="fiscal_performance" value="fiscal_performance" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 overflow-hidden cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
              <div className="flex items-center justify-between mb-6">
                 <div>
                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fiscal Performance</p>
@@ -242,7 +272,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'expense_distribution':
         return (
-          <Reorder.Item key="expense_distribution" value="expense_distribution" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
+          <Reorder.Item key="expense_distribution" value="expense_distribution" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expense Allocation</p>
              <div className="flex items-center gap-4">
                 <div className="w-44 h-44 shrink-0 relative">
@@ -286,7 +316,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'quarterly_utilization':
         return (
-          <Reorder.Item key="quarterly_utilization" value="quarterly_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
+          <Reorder.Item key="quarterly_utilization" value="quarterly_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Quarterly Operational Hours</p>
              <div className="h-40 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -313,7 +343,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
         )
       case 'mid_grid':
         return (
-          <Reorder.Item key="mid_grid" value="mid_grid" className="grid grid-cols-3 gap-4 mb-4">
+          <Reorder.Item key="mid_grid" value="mid_grid" className="grid grid-cols-3 gap-4 mb-4 cursor-grab active:cursor-grabbing">
             <motion.div key={`serv-${v.id}`} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="col-span-1 bg-white border border-slate-100 rounded-3xl p-5 shadow-sm flex flex-col justify-center text-center">
               <Clock className="w-5 h-5 text-indigo-500 mx-auto mb-2" />
               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Service Due</p>
@@ -337,7 +367,15 @@ const MonitorDetailPanel = ({ vehicle: v, onClose }) => {
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="shrink-0 flex flex-col bg-soft-bg rounded-[2.5rem] shadow-premium border-l border-white/50 overflow-hidden h-full max-h-screen relative z-10"
     >
-      <div className="px-8 pt-8 pb-4 flex items-center justify-between shrink-0">
+      <div className="px-8 pt-8 pb-4 flex items-center justify-between shrink-0 relative group/detail">
+        {/* Dashboard Drag Handle */}
+        <div 
+          onPointerDown={(e) => dragControls?.start(e)}
+          className="absolute top-3 left-1/2 -translate-x-1/2 z-50 p-1 opacity-0 group-hover/detail:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+        >
+          <GripVertical className="w-4 h-4 text-slate-300" />
+        </div>
+
         <h1 className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em]">Driftsoversigt</h1>
         <button onClick={onClose} className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-red-500 transition-all duration-300">
           <X className="w-4 h-4" />

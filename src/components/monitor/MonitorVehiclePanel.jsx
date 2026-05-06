@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, ChevronDown, ChevronRight, Truck, Layers, List,
-  MapPin, Activity, Gauge, Battery, Info, X, Car, Pickaxe
+  MapPin, Activity, Gauge, Battery, Info, X, Car, Pickaxe, GripVertical
 } from 'lucide-react'
 
 const STATUS_CONFIG = {
@@ -167,15 +167,25 @@ const MonitorVehiclePanel = ({
   activeGroupFilter, onGroupFilter,
   focusedVehicle, selectedVehicle,
   onSingleClick, onDoubleClick,
+  dragControls,
 }) => {
   const movingCount = useMemo(() => allVehicles.filter(v => v.status === 'Moving').length, [allVehicles])
 
   return (
-    <div className="w-[320px] h-full shrink-0 flex flex-col bg-white/40 backdrop-blur-2xl rounded-[2.5rem] shadow-premium border border-white/50 overflow-hidden">
+    <div className="w-[320px] h-full shrink-0 flex flex-col bg-white/40 backdrop-blur-2xl rounded-[2.5rem] shadow-premium border border-white/50 overflow-hidden relative group/panel">
+      
+      {/* Drag Handle Overlay */}
+      <div 
+        onPointerDown={(e) => dragControls?.start(e)}
+        className="absolute top-3 left-1/2 -translate-x-1/2 z-50 p-1 opacity-0 group-hover/panel:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+      >
+        <GripVertical className="w-4 h-4 text-slate-300" />
+      </div>
 
       {/* Visual Header */}
-      <div className="px-6 pt-6 pb-4">
+      <div className="px-6 pt-7 pb-4">
         <div className="flex items-center justify-between mb-5">
+
           <div>
             <h2 className="text-[17px] font-black text-slate-800 tracking-tight leading-none">Fleet Console</h2>
             <div className="flex items-center gap-2 mt-1.5">
