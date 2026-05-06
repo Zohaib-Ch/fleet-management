@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
-import { Maximize2, Minimize2, GripVertical, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Maximize2, Minimize2, GripVertical, ChevronLeft, ChevronRight, LayoutDashboard } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
 import { mockVehicles, mockVehicleGroups, mockMonitorStats } from '../mockData'
@@ -25,6 +25,16 @@ const Monitor = () => {
   const [activeGroupFilter, setActiveGroupFilter] = useState(null)
   const [focusedVehicle, setFocusedVehicle] = useState(null)
   const [selectedVehicle, setSelectedVehicle] = useState(null)
+  const [industryMode, setIndustryMode] = useState('General')
+  const [showIndustryDropdown, setShowIndustryDropdown] = useState(false)
+
+  const industries = [
+    { id: 'General', label: 'General', types: [] },
+    { id: 'Construction', label: 'Construction', types: ['Excavator', 'Lift', 'Crane'] },
+    { id: 'Rental', label: 'Rental', types: ['Car', 'SUV'] },
+    { id: 'Vans', label: 'Vans', types: ['Van', 'Delivery'] },
+    { id: 'Transport', label: 'Transport', types: ['Truck', 'Trailer'] },
+  ]
 
   // Customizable Dashboard Order - Stable Layout logic
   const [dashboardOrder, setDashboardOrder] = useState(() => {
@@ -120,8 +130,10 @@ const Monitor = () => {
     const matchSearch = !q || v.name.toLowerCase().includes(q) || v.id.toLowerCase().includes(q)
     const matchGroup = !activeGroupFilter || v.group === activeGroupFilter
     const matchStatus = statusFilters.includes(v.status)
-    return matchSearch && matchGroup && matchStatus
-  }), [liveVehicles, searchQuery, activeGroupFilter, statusFilters])
+    const currentIndustry = industries.find(i => i.id === industryMode)
+    const matchIndustry = industryMode === 'General' || currentIndustry?.types?.includes(v.type)
+    return matchSearch && matchGroup && matchStatus && matchIndustry
+  }), [liveVehicles, searchQuery, activeGroupFilter, statusFilters, industryMode])
 
   return (
     <div className={`flex h-screen w-screen overflow-hidden bg-[#F0F4F8] relative font-sans transition-all duration-500`}>
@@ -137,6 +149,94 @@ const Monitor = () => {
         {!isFullscreen && (
           <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -50, opacity: 0 }}>
             <TopBar hideSearch={true} hideProfile={true} hideNotifications={true} />
+
+            {/* Compact Professional Header */}
+            <div className="flex items-center justify-between mb-4 px-1">
+              {/* Left: Title & Pulse */}
+              <div className="flex items-center gap-6">
+                <div>
+                  <h1 className="text-xl font-black text-slate-800 tracking-tight leading-none mb-1">Monitoring</h1>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Asset Intel</p>
+                  </div>
+                </div>
+
+                <div className="h-6 w-px bg-slate-200" />
+
+                <div className="flex items-center gap-6">
+                  <div>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Integrity</p>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-black text-slate-800 tracking-tight">98.4%</span>
+                      <span className="text-[8px] font-black text-emerald-500 bg-emerald-50 px-1 rounded">OK</span>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Missions</p>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-black text-slate-800 tracking-tight">24</span>
+                      <span className="text-[8px] font-black text-blue-500 bg-blue-50 px-1 rounded">LIVE</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Compact Switcher */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowIndustryDropdown(!showIndustryDropdown)}
+                  className="flex items-center gap-3 px-4 py-2 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-blue-400 transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <LayoutDashboard className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Operating Sector</p>
+                    <p className="text-[11px] font-black text-slate-800 group-hover:text-blue-600 transition-colors">{industryMode}</p>
+                  </div>
+                  <ChevronRight className={`w-3.5 h-3.5 text-slate-300 transition-transform ${showIndustryDropdown ? 'rotate-90' : ''}`} />
+                </button>
+
+                <AnimatePresence>
+                  {showIndustryDropdown && (
+                    <>
+                      <div className="fixed inset-0 z-40" onClick={() => setShowIndustryDropdown(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-2 w-64 bg-white rounded-[2rem] shadow-xl border border-slate-100 p-2 z-[1001] overflow-hidden"
+                      >
+                        <div className="px-4 py-2 border-b border-slate-50 mb-1">
+                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Sector Switcher</p>
+                        </div>
+                        {[
+                          { id: 'General', label: 'General Fleet', desc: 'Unified category view.' },
+                          { id: 'Construction', label: 'Construction', desc: 'Heavy equipment.' },
+                          { id: 'Rental', label: 'Rental & Sales', desc: 'Light vehicles.' },
+                          { id: 'Vans', label: 'Last-Mile Vans', desc: 'Delivery optimization.' },
+                          { id: 'Transport', label: 'Heavy Transport', desc: 'Logistics tracking.' },
+                        ].map(ind => (
+                          <div
+                            key={ind.id}
+                            onClick={() => { setIndustryMode(ind.id); setShowIndustryDropdown(false); }}
+                            className={`px-4 py-2.5 rounded-xl cursor-pointer transition-all mb-0.5 border ${industryMode === ind.id
+                                ? 'bg-blue-50 border-blue-100'
+                                : 'hover:bg-slate-50 border-transparent hover:border-slate-100'
+                              }`}
+                          >
+                            <p className={`text-[11px] font-black ${industryMode === ind.id ? 'text-blue-700' : 'text-slate-800'}`}>{ind.label}</p>
+                            <p className="text-[9px] font-bold text-slate-400 leading-tight mt-0.5">{ind.desc}</p>
+                          </div>
+                        ))}
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+
             <MonitorStatsBar stats={stats} showConfig={showStatsConfig} onToggleConfig={() => setShowStatsConfig(p => !p)} onToggleStat={toggleStat} />
           </motion.div>
         )}

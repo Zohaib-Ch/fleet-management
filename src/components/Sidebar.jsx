@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  LayoutDashboard, 
-  Map as MapIcon, 
-  Truck, 
-  ShieldCheck, 
-  Wrench, 
+import {
+  LayoutDashboard,
+  Map as MapIcon,
+  Truck,
+  ShieldCheck,
+  Wrench,
   BarChart3,
   Activity,
   Users as UsersIcon,
@@ -24,14 +24,13 @@ const SidebarItem = ({ icon: Icon, label, active, onClick, isCollapsed }) => (
     whileHover={{ scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
     onClick={onClick}
-    className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl cursor-pointer transition-all duration-300 relative group ${
-      active 
-        ? 'bg-tech-blue text-white shadow-lg' 
+    className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl cursor-pointer transition-all duration-300 relative group ${active
+        ? 'bg-tech-blue text-white shadow-lg'
         : 'text-slate-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-tech-blue'
-    } ${isCollapsed ? 'justify-center px-0' : ''}`}
+      } ${isCollapsed ? 'justify-center px-0' : ''}`}
   >
     <Icon className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-slate-400'}`} />
-    
+
     <AnimatePresence mode="wait">
       {!isCollapsed && (
         <motion.span
@@ -114,7 +113,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             )}
           </AnimatePresence>
           <div className={`w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100 shrink-0 ${isCollapsed ? 'shadow-sm' : ''}`}>
-             <Truck className="w-5 h-5 text-blue-700" />
+            <Truck className="w-5 h-5 text-blue-700" />
           </div>
         </div>
 
@@ -122,12 +121,12 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         <nav className={`flex flex-col gap-1.5 overflow-x-hidden overflow-y-auto custom-scrollbar min-h-0 ${!isCollapsed ? 'stable-scrollbar pr-2' : ''}`}>
           {navItems.map((item) => (
             hasPermission(item.permission) && (
-              <SidebarItem 
+              <SidebarItem
                 key={item.id}
-                icon={item.icon} 
-                label={item.label} 
-                active={activeTab === item.id} 
-                onClick={() => handleNav(item.id, item.path)} 
+                icon={item.icon}
+                label={item.label}
+                active={activeTab === item.id}
+                onClick={() => handleNav(item.id, item.path)}
                 isCollapsed={isCollapsed}
               />
             )
@@ -155,9 +154,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 )}
               </AnimatePresence>
             </div>
-            
+
             <div className={`flex gap-2 w-full ${isCollapsed ? 'flex-col items-center' : ''}`}>
-              <button 
+              <button
                 onClick={logout}
                 className="flex-1 p-2.5 bg-white rounded-xl shadow-sm text-slate-400 hover:text-red-500 transition-all border border-slate-50 flex items-center justify-center"
                 title="Logout"
@@ -171,9 +170,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         </div>
       </motion.aside>
 
-      <CustomizationModal 
-        isOpen={isCustomizing} 
-        onClose={() => setIsCustomizing(false)} 
+      <CustomizationModal
+        isOpen={isCustomizing}
+        onClose={() => setIsCustomizing(false)}
       />
     </>
   )

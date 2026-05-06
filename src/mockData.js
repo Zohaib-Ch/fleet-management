@@ -209,7 +209,34 @@ export const mockChartData = {
     { month: 'Jan', performance: 88 }, { month: 'Feb', performance: 90 },
     { month: 'Mar', performance: 92 }, { month: 'Apr', performance: 95 },
     { month: 'May', performance: 94 }, { month: 'Jun', performance: 98 }
-  ]
+  ],
+  hourlyFleetStatus: [
+    { h: '8:00', available: 3, inWork: 6, service: 0 },
+    { h: '9:00', available: 3, inWork: 5, service: 1 },
+    { h: '10:00', available: 3, inWork: 7, service: 2 },
+    { h: '11:00', available: 1, inWork: 7, service: 1 },
+    { h: '12:00', available: 1, inWork: 6, service: 1 },
+    { h: '13:00', available: 4, inWork: 4, service: 1 },
+    { h: '14:00', available: 3, inWork: 4, service: 2 },
+    { h: '15:00', available: 5, inWork: 4, service: 1 },
+    { h: '16:00', available: 4, inWork: 4, service: 3 },
+    { h: '17:00', available: 3, inWork: 4, service: 2 },
+    { h: '18:00', available: 5, inWork: 1, service: 3 },
+    { h: '19:00', available: 6, inWork: 2, service: 1 },
+  ],
+  vehicleTypeDistribution: [
+    { name: 'PC', value: 55.56, color: '#2DD4BF' },
+    { name: 'Pass Van', value: 11.11, color: '#8B5CF6' },
+    { name: 'Van', value: 22.22, color: '#3B82F6' },
+    { name: 'EV', value: 11.11, color: '#10B981' },
+    { name: 'Bus', value: 5.5, color: '#84CC16' },
+  ],
+  dailyFleetComposition: Array.from({ length: 30 }, (_, i) => ({
+    d: `${i + 1}.05`,
+    available: srnd(40, 160),
+    service: srnd(10, 40),
+    inWork: srnd(20, 140),
+  }))
 }
 
 export const mockAlerts = [

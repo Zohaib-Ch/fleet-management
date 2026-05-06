@@ -17,6 +17,8 @@ import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
 import { mockVehicles, mockChartData, mockUsers } from '../mockData'
 import toast from 'react-hot-toast'
+import * as docx from 'docx'
+import { saveAs } from 'file-saver'
 
 // ── Animation presets ─────────────────────────────────────────────────────────
 const fadeUp = (d = 0) => ({ 
@@ -122,6 +124,7 @@ const ReportsPage = () => {
   
   const [activeReport, setActiveReport] = useState('fleet-overview')
   const [searchQuery, setSearchQuery] = useState('')
+  const reportRef = React.useRef(null)
 
   const user = useMemo(() => mockUsers.find(u => u.id === userId), [userId])
 
@@ -168,102 +171,399 @@ const ReportsPage = () => {
     }
   ]
 
+  // ── Export Logic ───────────────────────────────────────────────────────────
+  
+  const handleExportWord = async () => {
+    const loadToast = toast.loading('Synthesizing Intelligence Report...')
+    try {
+      const reportEl = reportRef.current
+      if (!reportEl) throw new Error("Report context not found")
+
+      // 1. Capture ONLY Charts (Recharts surfaces), skip UI icons
+      const chartImages = []
+      const chartSvgs = reportEl.querySelectorAll('.recharts-surface')
+      
+      for (const svg of chartSvgs) {
+        try {
+          const canvas = document.createElement('canvas')
+          const svgData = new XMLSerializer().serializeToString(svg)
+          const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+          const url = URL.createObjectURL(svgBlob)
+          
+          const img = new Image()
+          await new Promise((resolve, reject) => {
+            img.onload = resolve
+            img.onerror = reject
+            img.src = url
+          })
+          
+          // Use fixed width for report charts to keep them crisp and sized correctly in Word
+          canvas.width = 1200
+          canvas.height = (img.height / img.width) * 1200
+          const ctx = canvas.getContext('2d')
+          ctx.fillStyle = 'white'
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+          
+          chartImages.push(canvas.toDataURL('image/jpeg', 0.9))
+          URL.revokeObjectURL(url)
+        } catch (err) { console.warn("Chart capture failed:", err) }
+      }
+
+      // 2. Construct Professional Document
+      const docChildren = []
+
+      // Branding Header
+      docChildren.push(
+        new docx.Paragraph({
+          children: [
+            new docx.TextRun({ text: "JAXIFLEET COMMAND CENTER", bold: true, size: 20, color: "4F46E5", characterSpacing: 40 }),
+          ],
+        }),
+        new docx.Paragraph({
+          children: [
+            new docx.TextRun({ text: userId ? "PERSONNEL PERFORMANCE AUDIT" : activeReport.toUpperCase().replace('-', ' '), bold: true, size: 40, color: "0f172a" }),
+          ],
+          spacing: { before: 200, after: 400 },
+        })
+      )
+
+      // Report Metadata Table
+      docChildren.push(
+        new docx.Table({
+          width: { size: 100, type: docx.WidthType.PERCENTAGE },
+          borders: {
+            top: { style: docx.BorderStyle.SINGLE, size: 1, color: "E2E8F0" },
+            bottom: { style: docx.BorderStyle.SINGLE, size: 1, color: "E2E8F0" },
+            left: { style: docx.BorderStyle.NONE },
+            right: { style: docx.BorderStyle.NONE },
+          },
+          rows: [
+            new docx.TableRow({
+              children: [
+                new docx.TableCell({
+                  shading: { fill: "F8FAFC" },
+                  children: [
+                    new docx.Paragraph({
+                      children: [
+                        new docx.TextRun({ text: "Generated: ", bold: true, size: 18 }),
+                        new docx.TextRun({ text: new Date().toLocaleString(), size: 18 }),
+                      ],
+                    }),
+                    new docx.Paragraph({
+                      children: [
+                        new docx.TextRun({ text: "Report Period: ", bold: true, size: 18 }),
+                        new docx.TextRun({ text: "Last 14 Days (Live Synthesis)", size: 18 }),
+                      ],
+                    }),
+                  ],
+                  padding: { top: 100, bottom: 100, left: 100 },
+                }),
+              ],
+            }),
+          ],
+        })
+      )
+
+      // Subject Info (for User Report)
+      if (userId && user) {
+        docChildren.push(
+          new docx.Paragraph({ spacing: { before: 400 } }),
+          new docx.Paragraph({
+            children: [
+              new docx.TextRun({ text: `Subject: ${user.name}`, bold: true, size: 28, color: "1e293b" }),
+            ],
+          }),
+          new docx.Paragraph({
+            children: [
+              new docx.TextRun({ text: `Role: ${user.role.name} | Security Score: ${user.performance}%`, size: 18, color: "64748b" }),
+            ],
+            spacing: { after: 400 },
+          })
+        )
+      }
+
+      // Main Content: Charts
+      if (chartImages.length > 0) {
+        docChildren.push(
+          new docx.Paragraph({
+            children: [new docx.TextRun({ text: "TELEMETRY & VISUAL ANALYTICS", bold: true, size: 24, color: "334155" })],
+            spacing: { before: 600, after: 200 },
+          })
+        )
+
+        chartImages.forEach((imgData) => {
+          const base64 = imgData.split(',')[1]
+          const binary = atob(base64)
+          const bytes = new Uint8Array(binary.length)
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+
+          docChildren.push(
+            new docx.Paragraph({
+              alignment: docx.AlignmentType.CENTER,
+              children: [
+                new docx.ImageRun({
+                  data: bytes,
+                  transformation: { width: 520, height: 260 },
+                })
+              ],
+              spacing: { before: 200, after: 200 },
+            })
+          )
+        })
+      }
+
+      // Operational Metrics Summary
+      docChildren.push(
+        new docx.Paragraph({
+          children: [new docx.TextRun({ text: "KEY PERFORMANCE INDICATORS", bold: true, size: 24, color: "334155" })],
+          spacing: { before: 400, after: 200 },
+        }),
+        new docx.Table({
+          width: { size: 100, type: docx.WidthType.PERCENTAGE },
+          rows: [
+            new docx.TableRow({
+              tableHeader: true,
+              children: [
+                new docx.TableCell({ shading: { fill: "4F46E5" }, children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "METRIC", bold: true, color: "FFFFFF" })] })] }),
+                new docx.TableCell({ shading: { fill: "4F46E5" }, children: [new docx.Paragraph({ children: [new docx.TextRun({ text: "VALUE", bold: true, color: "FFFFFF" })] })] }),
+              ],
+            }),
+            new docx.TableRow({
+              children: [
+                new docx.TableCell({ children: [new docx.Paragraph("Fleet Health Index")] }),
+                new docx.TableCell({ children: [new docx.Paragraph("98.4% (Optimal)")] }),
+              ],
+            }),
+            new docx.TableRow({
+              children: [
+                new docx.TableCell({ children: [new docx.Paragraph("Safety Compliance")] }),
+                new docx.TableCell({ children: [new docx.Paragraph("High - 0 Incidents")] }),
+              ],
+            }),
+          ],
+        })
+      )
+
+      // Footer
+      docChildren.push(
+        new docx.Paragraph({
+          alignment: docx.AlignmentType.CENTER,
+          children: [
+            new docx.TextRun({ text: "\nEnd of Secure Intelligence Report.", italics: true, color: "94a3b8", size: 16 }),
+          ],
+          spacing: { before: 800 },
+        })
+      )
+
+      const doc = new docx.Document({
+        creator: "JaxiFleet Hub",
+        title: "Fleet Report",
+        sections: [{ children: docChildren }],
+      })
+
+      const blob = await docx.Packer.toBlob(doc)
+      saveAs(blob, `JaxiFleet_Report_${activeReport}_${new Date().getTime()}.docx`)
+      toast.success('Report synthesized successfully', { id: loadToast })
+    } catch (error) {
+      console.error("WORD EXPORT CRITICAL FAIL:", error)
+      toast.error(`Export error: ${error.message}`, { id: loadToast })
+    }
+  }
+
   // ── Render Helpers ──────────────────────────────────────────────────────────
 
   const renderFleetOverview = () => (
-    <div className="space-y-6">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: 'Active Vehicles', val: '34', sub: '71% Utilization', icon: Truck, color: '#10B981', bg: 'bg-emerald-50' },
-          { label: 'Open Alerts', val: '8', sub: 'Across the fleet', icon: AlertTriangle, color: '#EF4444', bg: 'bg-red-50' },
-          { label: 'Services Completed', val: '9', sub: 'Lifetime count', icon: Wrench, color: '#F59E0B', bg: 'bg-amber-50' },
-          { label: 'Service Spend', val: '$850', sub: 'Recorded costs', icon: DollarSign, color: '#6366F1', bg: 'bg-indigo-50' },
-        ].map((k, i) => (
-          <motion.div key={i} {...fadeUp(i * 0.05)} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center gap-5">
-            <div className={`w-12 h-12 rounded-2xl ${k.bg} flex items-center justify-center text-white`} style={{ color: k.color }}>
-              <k.icon className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-2xl font-black text-slate-800 leading-none mb-1">{k.val}</p>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{k.label}</p>
-              <p className="text-[9px] font-bold text-slate-300 uppercase mt-1">{k.sub}</p>
-            </div>
-          </motion.div>
-        ))}
+    <div className="space-y-8 pb-10">
+      {/* ── HOURLY CHARTS SECTION ────────────────────────────────────────── */}
+      <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
+        <div className="flex items-center justify-between mb-8">
+           <div className="flex items-center gap-4">
+              <h3 className="text-xl font-black text-slate-800 tracking-tight">Hourly Charts</h3>
+              <div className="bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg flex items-center gap-2">
+                 <Calendar className="w-3.5 h-3.5 text-blue-500" />
+                 <span className="text-[11px] font-bold text-slate-600">28.05.2026</span>
+              </div>
+           </div>
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Last updated at <span className="text-slate-800">11:00 AM</span></p>
+        </div>
+
+        <div className="grid grid-cols-12 gap-8">
+          {/* Hourly Fleet Status Bar Chart */}
+          <div className="col-span-6 bg-slate-50/50 rounded-3xl p-6 border border-slate-50">
+             <SectionLabel>Hourly Fleet Status</SectionLabel>
+             <div className="h-[280px] mt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                   <BarChart data={mockChartData.hourlyFleetStatus}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                      <XAxis dataKey="h" axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94A3B8'}} />
+                      <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94A3B8'}} />
+                      <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }} />
+                      <Bar dataKey="available" fill="#2DD4BF" radius={[2, 2, 0, 0]} name="Available" />
+                      <Bar dataKey="inWork" fill="#3B82F6" radius={[2, 2, 0, 0]} name="InWork" />
+                      <Bar dataKey="service" fill="#8B5CF6" radius={[2, 2, 0, 0]} name="Service" />
+                   </BarChart>
+                </ResponsiveContainer>
+             </div>
+             <div className="flex justify-center gap-6 mt-4">
+                {[
+                  { l: 'Available', c: 'bg-[#2DD4BF]' },
+                  { l: 'InWork', c: 'bg-[#3B82F6]' },
+                  { l: 'Service', c: 'bg-[#8B5CF6]' },
+                ].map(item => (
+                  <div key={item.l} className="flex items-center gap-2">
+                     <div className={`w-3 h-3 rounded-full ${item.c}`} />
+                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{item.l}</span>
+                  </div>
+                ))}
+             </div>
+          </div>
+
+          {/* Real-time Status Pie */}
+          <div className="col-span-3 bg-slate-50/50 rounded-3xl p-6 border border-slate-50 flex flex-col">
+             <SectionLabel>Real-time Fleet Status</SectionLabel>
+             <div className="flex-1 flex items-center justify-center">
+                <div className="h-[200px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                     <RePieChart>
+                        <Pie
+                           data={[
+                             { name: 'Available', value: 66.67, fill: '#2DD4BF' },
+                             { name: 'Service', value: 11.11, fill: '#8B5CF6' },
+                             { name: 'InWork', value: 22.22, fill: '#3B82F6' },
+                           ]}
+                           cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={2} dataKey="value"
+                        >
+                           { [0,1,2].map((_, i) => <Cell key={i} />) }
+                        </Pie>
+                        <Tooltip />
+                     </RePieChart>
+                  </ResponsiveContainer>
+                </div>
+             </div>
+             <div className="grid grid-cols-2 gap-2 mt-4">
+                {[
+                  { l: 'Available', c: 'bg-[#2DD4BF]' },
+                  { l: 'Service', c: 'bg-[#8B5CF6]' },
+                  { l: 'InWork', c: 'bg-[#3B82F6]' },
+                ].map(item => (
+                  <div key={item.l} className="flex items-center gap-2">
+                     <div className={`w-2.5 h-2.5 rounded-full ${item.c}`} />
+                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">{item.l}</span>
+                  </div>
+                ))}
+             </div>
+          </div>
+
+          {/* Vehicle Type Pie */}
+          <div className="col-span-3 bg-slate-50/50 rounded-3xl p-6 border border-slate-50 flex flex-col">
+             <SectionLabel>Vehicle Type</SectionLabel>
+             <div className="flex-1 flex items-center justify-center">
+                <div className="h-[200px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                     <RePieChart>
+                        <Pie
+                           data={mockChartData.vehicleTypeDistribution}
+                           cx="50%" cy="50%" innerRadius={0} outerRadius={70} dataKey="value"
+                        >
+                           { mockChartData.vehicleTypeDistribution.map((entry, i) => (
+                             <Cell key={i} fill={entry.color} />
+                           )) }
+                        </Pie>
+                        <Tooltip />
+                     </RePieChart>
+                  </ResponsiveContainer>
+                </div>
+             </div>
+             <div className="grid grid-cols-2 gap-2 mt-4">
+                {mockChartData.vehicleTypeDistribution.map(item => (
+                  <div key={item.name} className="flex items-center gap-2">
+                     <div className="w-2.5 h-2.5 rounded-full" style={{ background: item.color }} />
+                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">{item.name}</span>
+                  </div>
+                ))}
+             </div>
+          </div>
+        </div>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-2 gap-6">
-        <motion.div {...fadeUp(0.2)} className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
-           <SectionLabel>Fleet Status</SectionLabel>
-           <div className="flex items-center gap-10">
-              <Ring value={48} max={48} sublabel="VEHICLES" color="#10B981" />
-              <div className="flex-1 space-y-4">
+      {/* ── CHARTS FOR PERIOD SECTION ───────────────────────────────────── */}
+      <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
+        <div className="flex items-center gap-6 mb-8">
+           <h3 className="text-xl font-black text-slate-800 tracking-tight">Charts for period</h3>
+           <div className="bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg flex items-center gap-2">
+              <Calendar className="w-3.5 h-3.5 text-blue-500" />
+              <span className="text-[11px] font-bold text-slate-600">28.04.2026 - 28.05.2026</span>
+           </div>
+        </div>
+
+        <div className="grid grid-cols-12 gap-8">
+           {/* Daily Fleet Status composition */}
+           <div className="col-span-9 bg-slate-50/50 rounded-3xl p-6 border border-slate-50">
+              <SectionLabel>Daily Fleet Status composition</SectionLabel>
+              <div className="h-[320px] mt-4">
+                 <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={mockChartData.dailyFleetComposition}>
+                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                       <XAxis dataKey="d" axisLine={false} tickLine={false} tick={{fontSize: 8, fill: '#94A3B8'}} />
+                       <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fill: '#94A3B8'}} />
+                       <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }} />
+                       <Bar dataKey="available" fill="#2DD4BF" stackId="a" name="Available" />
+                       <Bar dataKey="service" fill="#8B5CF6" stackId="a" name="Service" />
+                       <Bar dataKey="inWork" fill="#3B82F6" stackId="a" name="InWork" />
+                    </BarChart>
+                 </ResponsiveContainer>
+              </div>
+              <div className="flex justify-center gap-8 mt-4">
                  {[
-                   { l: 'Active', v: 34, p: '71%', c: 'bg-emerald-500' },
-                   { l: 'In Shop', v: 8, p: '17%', c: 'bg-amber-400' },
-                   { l: 'Out of Service', v: 5, p: '10%', c: 'bg-red-500' },
-                   { l: 'Sold', v: 1, p: '2%', c: 'bg-slate-300' },
+                   { l: 'Available', c: 'bg-[#2DD4BF]' },
+                   { l: 'Service', c: 'bg-[#8B5CF6]' },
+                   { l: 'InWork', c: 'bg-[#3B82F6]' },
                  ].map(item => (
-                   <div key={item.l} className="flex items-center justify-between group">
-                      <div className="flex items-center gap-3">
-                         <div className={`w-2 h-2 rounded-full ${item.c}`} />
-                         <span className="text-xs font-bold text-slate-600">{item.l}</span>
-                      </div>
-                      <span className="text-xs font-black text-slate-400">{item.v} · <span className="text-slate-800">{item.p}</span></span>
+                   <div key={item.l} className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${item.c}`} />
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.l}</span>
                    </div>
                  ))}
               </div>
            </div>
-        </motion.div>
 
-        <motion.div {...fadeUp(0.25)} className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
-           <SectionLabel>Alerts by Severity</SectionLabel>
-           <div className="flex items-center gap-10">
-              <Ring value={8} max={8} sublabel="ALERTS" color="#EF4444" />
-              <div className="flex-1 space-y-4">
+           {/* Ratio Fleet Status for Period */}
+           <div className="col-span-3 bg-slate-50/50 rounded-3xl p-6 border border-slate-50 flex flex-col">
+              <SectionLabel>Ratio Fleet Status for Period</SectionLabel>
+              <div className="flex-1 flex items-center justify-center">
+                 <div className="h-[220px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                       <RePieChart>
+                          <Pie
+                             data={[
+                               { name: 'Available', value: 40.71, fill: '#2DD4BF' },
+                               { name: 'Service', value: 10.29, fill: '#8B5CF6' },
+                               { name: 'InWork', value: 49.00, fill: '#3B82F6' },
+                             ]}
+                             cx="50%" cy="50%" innerRadius={0} outerRadius={85} dataKey="value"
+                          >
+                             { [0,1,2].map((_, i) => <Cell key={i} />) }
+                          </Pie>
+                          <Tooltip />
+                       </RePieChart>
+                    </ResponsiveContainer>
+                 </div>
+              </div>
+              <div className="grid grid-cols-1 gap-3 mt-6 pl-4">
                  {[
-                   { l: 'Critical', v: 3, p: '38%', c: 'bg-red-500' },
-                   { l: 'Warning', v: 4, p: '50%', c: 'bg-amber-400' },
-                   { l: 'Info', v: 1, p: '13%', c: 'bg-blue-500' },
+                   { l: 'Available', c: 'bg-[#2DD4BF]' },
+                   { l: 'Service', c: 'bg-[#8B5CF6]' },
+                   { l: 'InWork', c: 'bg-[#3B82F6]' },
                  ].map(item => (
-                   <div key={item.l} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                         <div className={`w-2 h-2 rounded-full ${item.c}`} />
-                         <span className="text-xs font-bold text-slate-600">{item.l}</span>
-                      </div>
-                      <span className="text-xs font-black text-slate-400">{item.v} · <span className="text-slate-800">{item.p}</span></span>
+                   <div key={item.l} className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${item.c}`} />
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.l}</span>
                    </div>
                  ))}
               </div>
            </div>
-        </motion.div>
-      </div>
-
-      {/* Progress Bars Row */}
-      <div className="grid grid-cols-2 gap-6 pb-10">
-        <motion.div {...fadeUp(0.3)} className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
-           <SectionLabel>Top Alert Kinds</SectionLabel>
-           <div className="space-y-6">
-              <ProgressBar label="High engine temp" value={1} color="#EF4444" />
-              <ProgressBar label="Low fuel" value={1} color="#EF4444" />
-              <ProgressBar label="Overdue service" value={1} color="#EF4444" />
-              <ProgressBar label="Geofence exited" value={1} color="#EF4444" />
-              <ProgressBar label="High idle" value={1} color="#EF4444" />
-           </div>
-        </motion.div>
-
-        <motion.div {...fadeUp(0.35)} className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
-           <SectionLabel>Service Kinds</SectionLabel>
-           <div className="space-y-6">
-              <ProgressBar label="Tire rotation" value={4} max={5} color="#3B82F6" />
-              <ProgressBar label="Inspection" value={4} max={5} color="#3B82F6" />
-              <ProgressBar label="Oil change" value={4} max={5} color="#3B82F6" />
-              <ProgressBar label="Brake service" value={3} max={5} color="#3B82F6" />
-              <ProgressBar label="Engine service" value={2} max={5} color="#3B82F6" />
-           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   )
@@ -534,15 +834,16 @@ const ReportsPage = () => {
                     <button onClick={() => toast.success('Added to favorites')} className="p-2 text-slate-300 hover:text-amber-400 transition-all"><Star className="w-4 h-4" /></button>
                     <button onClick={() => toast.success('Refreshing data...')} className="p-2 text-slate-300 hover:text-blue-600 transition-all"><RefreshCw className="w-4 h-4" /></button>
                     <button onClick={() => window.print()} className="p-2 text-slate-300 hover:text-slate-600 transition-all"><Printer className="w-4 h-4" /></button>
+                    <button onClick={() => toast.success('Report exported to PDF')} className="p-2 text-slate-300 hover:text-red-500 transition-all" title="Export PDF"><FileText className="w-4 h-4" /></button>
                     <div className="h-4 w-px bg-slate-100 mx-2" />
-                    <button onClick={() => toast.success('Report exported to PDF')} className="px-5 py-2 bg-tech-blue text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all flex items-center gap-2">
-                       <Download className="w-3.5 h-3.5" /> Export PDF
+                    <button onClick={handleExportWord} className="px-5 py-2 bg-tech-blue text-white rounded-xl text-[10px] font-black uppercase tracking-[0.1em] shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all flex items-center gap-2">
+                       <Download className="w-3.5 h-3.5" /> Export Word
                     </button>
                  </div>
               </div>
 
               {/* Report Content */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
+              <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0" ref={reportRef}>
                  <AnimatePresence mode="wait">
                    <motion.div 
                      key={userId || activeReport}

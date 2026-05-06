@@ -4,9 +4,9 @@ import 'leaflet/dist/leaflet.css'
 
 // ── Custom marker icon factory ────────────────────────────────────────────────
 const STATUS_HEX = {
-  Moving:      '#10B981',
-  Resting:     '#F59E0B',
-  Idle:        '#94A3B8',
+  Moving: '#10B981',
+  Resting: '#F59E0B',
+  Idle: '#94A3B8',
   Maintenance: '#EF4444',
 }
 
@@ -67,7 +67,7 @@ const VehicleTooltipContent = ({ v }) => `
     <div style="font-size:10px;color:#64748b;margin-bottom:6px">${v.id} · ${v.plate}</div>
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">Driver: <span style="font-weight:600;color:#1e293b">${v.driver?.name || '—'}</span></div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
-      <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;background:${v.status==='Moving'?'#d1fae5':'#fef3c7'};color:${v.status==='Moving'?'#065f46':'#92400e'}">${v.status}</span>
+      <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;background:${v.status === 'Moving' ? '#d1fae5' : '#fef3c7'};color:${v.status === 'Moving' ? '#065f46' : '#92400e'}">${v.status}</span>
     </div>
   </div>
 `
@@ -114,7 +114,7 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
     const newMarkers = {}
 
     vehicles.slice(0, 120).forEach(v => {
-      const isFocused  = focusedVehicle?.id  === v.id
+      const isFocused = focusedVehicle?.id === v.id
       const isSelected = selectedVehicle?.id === v.id
       const icon = createMarkerIcon(v.status, isFocused, isSelected, v.type)
 
@@ -127,12 +127,12 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
           .on('click', () => onSingleClick(v))
           .on('dblclick', () => onDoubleClick(v))
           .on('mouseover', (e) => {
-             e.target.bindTooltip(VehicleTooltipContent({ v }), {
-               direction: 'top',
-               offset: [0, -16],
-               className: 'monitor-tooltip',
-               permanent: false,
-             }).openTooltip()
+            e.target.bindTooltip(VehicleTooltipContent({ v }), {
+              direction: 'top',
+              offset: [0, -16],
+              className: 'monitor-tooltip',
+              permanent: false,
+            }).openTooltip()
           })
           .on('mouseout', (e) => e.target.closeTooltip())
           .addTo(map)
