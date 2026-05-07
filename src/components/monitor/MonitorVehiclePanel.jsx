@@ -167,15 +167,15 @@ const MonitorVehiclePanel = ({
   activeGroupFilter, onGroupFilter,
   focusedVehicle, selectedVehicle,
   onSingleClick, onDoubleClick,
-  dragControls,
+  dragControls, isMobile,
 }) => {
   const movingCount = useMemo(() => allVehicles.filter(v => v.status === 'Moving').length, [allVehicles])
 
   return (
-    <div className="w-[320px] h-full shrink-0 flex flex-col bg-white/40 backdrop-blur-2xl rounded-[2.5rem] shadow-premium border border-white/50 overflow-hidden relative group/panel">
-      
+    <div className={`${isMobile ? 'w-full' : 'w-[320px]'} h-full shrink-0 flex flex-col bg-white/40 backdrop-blur-2xl rounded-[2rem] lg:rounded-[2.5rem] shadow-premium border border-white/50 overflow-hidden relative group/panel`}>
+
       {/* Drag Handle Overlay */}
-      <div 
+      <div
         onPointerDown={(e) => dragControls?.start(e)}
         className="absolute top-3 left-1/2 -translate-x-1/2 z-50 p-1 opacity-0 group-hover/panel:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
       >

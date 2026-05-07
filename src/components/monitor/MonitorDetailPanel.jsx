@@ -70,7 +70,7 @@ const ProgressBar = ({ label, value, color = "bg-blue-500", icon: Icon, keyId })
   </div>
 )
 
-const MonitorDetailPanel = ({ vehicle: v, onClose, dragControls }) => {
+const MonitorDetailPanel = ({ vehicle: v, onClose, dragControls, isMobile }) => {
   const navigate = useNavigate()
   const [moduleOrder, setModuleOrder] = useState(['driver_profile', 'hero_card', 'stats_strip', 'telemetry_grid', 'fiscal_performance', 'expense_distribution', 'quarterly_utilization', 'fuel_utilization', 'recent_trips', 'mid_grid'])
 
@@ -361,27 +361,29 @@ const MonitorDetailPanel = ({ vehicle: v, onClose, dragControls }) => {
 
   return (
     <motion.div
-      initial={{ width: 0, opacity: 0 }}
-      animate={{ width: 480, opacity: 1 }}
-      exit={{ width: 0, opacity: 0 }}
+      initial={isMobile ? { opacity: 0 } : { width: 0, opacity: 0 }}
+      animate={isMobile ? { opacity: 1 } : { width: 480, opacity: 1 }}
+      exit={isMobile ? { opacity: 0 } : { width: 0, opacity: 0 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="shrink-0 flex flex-col bg-soft-bg rounded-[2.5rem] shadow-premium border-l border-white/50 overflow-hidden h-full max-h-screen relative z-10"
+      className={`${isMobile ? 'w-full' : 'shrink-0'} flex flex-col bg-soft-bg rounded-[2rem] lg:rounded-[2.5rem] shadow-premium border-l border-white/50 overflow-hidden h-full max-h-screen relative z-10`}
     >
-      <div className="px-8 pt-8 pb-4 flex items-center justify-between shrink-0 relative group/detail">
+      <div className={`${isMobile ? 'px-5 pt-5' : 'px-8 pt-8'} pb-4 flex items-center justify-between shrink-0 relative group/detail`}>
         {/* Dashboard Drag Handle */}
-        <div
-          onPointerDown={(e) => dragControls?.start(e)}
-          className="absolute top-3 left-1/2 -translate-x-1/2 z-50 p-1 opacity-0 group-hover/detail:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
-        >
-          <GripVertical className="w-4 h-4 text-slate-300" />
-        </div>
+        {!isMobile && (
+          <div
+            onPointerDown={(e) => dragControls?.start(e)}
+            className="absolute top-3 left-1/2 -translate-x-1/2 z-50 p-1 opacity-0 group-hover/detail:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+          >
+            <GripVertical className="w-4 h-4 text-slate-300" />
+          </div>
+        )}
 
         <h1 className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em]">Driftsoversigt</h1>
         <button onClick={onClose} className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-red-500 transition-all duration-300">
           <X className="w-4 h-4" />
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto custom-scrollbar px-8 pb-8">
+      <div className={`flex-1 overflow-y-auto custom-scrollbar ${isMobile ? 'px-5 pb-5' : 'px-8 pb-8'}`}>
         <Reorder.Group axis="y" values={moduleOrder} onReorder={setModuleOrder} className="space-y-0">
           {moduleOrder.map(id => renderModule(id))}
         </Reorder.Group>

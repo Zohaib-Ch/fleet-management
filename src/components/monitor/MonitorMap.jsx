@@ -114,6 +114,9 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
     const newMarkers = {}
 
     vehicles.slice(0, 120).forEach(v => {
+      // Skip vehicles with invalid coordinates
+      if (!Number.isFinite(v.lat) || !Number.isFinite(v.lng)) return
+
       const isFocused = focusedVehicle?.id === v.id
       const isSelected = selectedVehicle?.id === v.id
       const icon = createMarkerIcon(v.status, isFocused, isSelected, v.type)
@@ -152,8 +155,18 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
 
   // Sync Focus Pan
   useEffect(() => {
-    if (map && focusedVehicle?.lat && focusedVehicle?.lng) {
-      map.flyTo([focusedVehicle.lat, focusedVehicle.lng], 14, { duration: 0.8 })
+    if (!map || !focusedVehicle) return
+    const lat = focusedVehicle.lat
+    const lng = focusedVehicle.lng
+    // Guard against NaN, undefined, or non-finite coords
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return
+    // Guard against map container having zero size (hidden on mobile tab switch)
+    const container = map.getContainer()
+    if (!container || container.clientWidth === 0 || container.clientHeight === 0) return
+    try {
+      map.flyTo([lat, lng], 14, { duration: 0.8 })
+    } catch (e) {
+      // Silently catch Leaflet animation errors during rapid tab switches
     }
   }, [map, focusedVehicle])
 

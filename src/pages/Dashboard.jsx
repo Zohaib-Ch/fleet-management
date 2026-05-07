@@ -72,30 +72,30 @@ const Dashboard = () => {
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-10 space-y-4">
 
           {/* CINEMATIC ANALYTICS HERO */}
-          <div className="relative rounded-[3rem] overflow-hidden bg-slate-900 p-8 shadow-2xl">
+          <div className="relative rounded-[2rem] lg:rounded-[3rem] overflow-hidden bg-slate-900 p-6 lg:p-8 shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/50 via-slate-900 to-indigo-900/50" />
-            <div className="absolute top-0 right-0 p-8 opacity-20">
+            <div className="absolute top-0 right-0 p-8 opacity-20 hidden lg:block">
               <Layers className="w-64 h-64 text-white" />
             </div>
 
-            <div className="relative z-10 flex justify-between items-end">
+            <div className="relative z-10 flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6">
               <div>
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="px-3 py-1 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 rounded-full text-[10px] font-black text-blue-300 uppercase tracking-widest">
+                  <div className="px-3 py-1 bg-blue-500/20 backdrop-blur-md border border-blue-400/30 rounded-full text-[9px] lg:text-[10px] font-black text-blue-300 uppercase tracking-widest">
                     Operational Intelligence
                   </div>
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
-                <h1 className="text-4xl font-black text-white tracking-tight mb-2">Fleet Analytics <span className="text-blue-400">Hub</span></h1>
-                <p className="text-slate-400 text-sm font-medium max-w-lg">Advanced telemetry synthesis from 482 active assets across Global Logistics Sector A.</p>
+                <h1 className="text-2xl lg:text-4xl font-black text-white tracking-tight mb-2">Fleet Analytics <span className="text-blue-400">Hub</span></h1>
+                <p className="text-slate-400 text-xs lg:text-sm font-medium max-w-lg">Advanced telemetry synthesis from 482 active assets across Global Logistics Sector A.</p>
               </div>
 
-              <div className="flex bg-white/5 backdrop-blur-xl border border-white/10 p-1.5 rounded-[1.5rem]">
+              <div className="flex bg-white/5 backdrop-blur-xl border border-white/10 p-1 rounded-2xl lg:rounded-[1.5rem] overflow-x-auto no-scrollbar">
                 {['7D', '30D', '90D', 'YTD'].map(r => (
                   <button
                     key={r}
                     onClick={() => setActiveRange(r)}
-                    className={`px-6 py-2.5 rounded-xl text-[11px] font-black tracking-widest transition-all ${activeRange === r ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-white'
+                    className={`px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl text-[10px] lg:text-[11px] font-black tracking-widest transition-all whitespace-nowrap ${activeRange === r ? 'bg-white text-slate-900 shadow-xl' : 'text-slate-400 hover:text-white'
                       }`}
                   >
                     {r}
@@ -106,7 +106,7 @@ const Dashboard = () => {
           </div>
 
           {/* TOP KPI GRID */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricCard label="Total Mileage" value="1.24M km" trend={12.4} icon={Navigation} color="bg-blue-600" delay={0.1} />
             <MetricCard label="Fuel Efficiency" value="94.2%" trend={-2.1} icon={Droplets} color="bg-indigo-600" delay={0.2} />
             <MetricCard label="Asset Uptime" value="98.8%" trend={0.5} icon={Zap} color="bg-emerald-600" delay={0.3} />
@@ -117,8 +117,8 @@ const Dashboard = () => {
           <div className="grid grid-cols-12 gap-4">
 
             {/* Primary Area Chart: Utilization Trends */}
-            <motion.div {...fadeUp(0.5)} className="col-span-8 bg-white/80 backdrop-blur-2xl rounded-[3rem] p-8 border border-white shadow-premium min-h-[450px] flex flex-col">
-              <div className="flex justify-between items-center mb-8">
+            <motion.div {...fadeUp(0.5)} className="col-span-12 lg:col-span-8 bg-white/80 backdrop-blur-2xl rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-8 border border-white shadow-premium min-h-[350px] lg:min-h-[450px] flex flex-col">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
                   <SectionLabel>Fleet Utilization Index</SectionLabel>
                   <h3 className="text-xl font-black text-slate-800 tracking-tight">Activity Analysis</h3>
@@ -135,8 +135,8 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="flex-1 w-full mt-4">
-                <ResponsiveContainer width="100%" height="100%">
+              <div className="flex-1 w-full mt-4 min-h-[200px]">
+                <ResponsiveContainer width="100%" height="100%" minHeight={200}>
                   <AreaChart data={mockChartData.fuelWeekly}>
                     <defs>
                       <linearGradient id="colorUtil" x1="0" y1="0" x2="0" y2="1">
@@ -181,12 +181,12 @@ const Dashboard = () => {
             </motion.div>
 
             {/* Side Column: Distribution & Performance */}
-            <div className="col-span-4 flex flex-col gap-4">
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
               {/* Pie Chart: Status Distribution */}
-              <motion.div {...fadeUp(0.6)} className="bg-white/80 backdrop-blur-2xl rounded-[3rem] p-8 border border-white shadow-premium flex-1 flex flex-col">
+              <motion.div {...fadeUp(0.6)} className="bg-white/80 backdrop-blur-2xl rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-8 border border-white shadow-premium flex-1 flex flex-col">
                 <SectionLabel>Status Distribution</SectionLabel>
                 <div className="flex-1 w-full min-h-[220px]">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" minHeight={220}>
                     <PieChart>
                       <Pie
                         data={[
@@ -223,10 +223,10 @@ const Dashboard = () => {
               </motion.div>
 
               {/* Bar Chart: Efficiency by Zone */}
-              <motion.div {...fadeUp(0.7)} className="bg-slate-900 rounded-[3rem] p-8 shadow-2xl flex-1 flex flex-col">
+              <motion.div {...fadeUp(0.7)} className="bg-slate-900 rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-8 shadow-2xl flex-1 flex flex-col">
                 <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-4">Regional Efficiency</p>
                 <div className="flex-1 w-full min-h-[160px]">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" minHeight={160}>
                     <BarChart data={mockChartData.fuelWeekly.slice(0, 5)}>
                       <XAxis
                         hide={true}
@@ -249,9 +249,9 @@ const Dashboard = () => {
           </div>
 
           {/* BOTTOM GRID: DATA TABLES & DEEP INSIGHTS */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Security Risk Scorecard */}
-            <motion.div {...fadeUp(0.8)} className="bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-sm">
+            <motion.div {...fadeUp(0.8)} className="bg-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-7 border border-slate-100 shadow-sm">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center text-red-500">
                   <AlertCircle className="w-6 h-6" />
@@ -281,8 +281,8 @@ const Dashboard = () => {
             </motion.div>
 
             {/* Top Performers Table */}
-            <motion.div {...fadeUp(0.9)} className="col-span-2 bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-sm flex flex-col">
-              <div className="flex justify-between items-center mb-6">
+            <motion.div {...fadeUp(0.9)} className="col-span-1 lg:col-span-2 bg-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-7 border border-slate-100 shadow-sm flex flex-col">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500">
                     <Target className="w-6 h-6" />
@@ -294,8 +294,8 @@ const Dashboard = () => {
                 </div>
                 <button className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline">View All</button>
               </div>
-              <div className="flex-1 overflow-hidden">
-                <table className="w-full">
+              <div className="flex-1 overflow-x-auto no-scrollbar">
+                <table className="w-full min-w-[500px]">
                   <thead>
                     <tr className="text-left">
                       <th className="pb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Asset ID</th>

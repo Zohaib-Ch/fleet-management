@@ -55,6 +55,7 @@ const VehiclesPage = () => {
   const [vehicles, setVehicles] = useState(mockVehicles)
   const [searchQuery, setSearchQuery] = useState('')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [mobileView, setMobileView] = useState('list') // 'list' or 'detail'
 
   const queryParams = new URLSearchParams(location.search)
   const queryId = queryParams.get('id')
@@ -66,12 +67,16 @@ const VehiclesPage = () => {
   useEffect(() => {
     if (queryId) {
       const v = vehicles.find(x => x.id === queryId)
-      if (v) setSelectedVehicle(v)
+      if (v) {
+        setSelectedVehicle(v)
+        setMobileView('detail')
+      }
     }
   }, [queryId, vehicles])
 
   const handleVehicleSelect = (v) => {
     setSelectedVehicle(v)
+    setMobileView('detail')
     navigate(`/vehicles?id=${v.id}`, { replace: true })
   }
 
@@ -95,27 +100,29 @@ const VehiclesPage = () => {
 
         {/* Asset Stats Bar */}
         <div className="flex gap-3 mb-1 shrink-0">
-          <div className="bg-white rounded-2xl p-4 flex-1 border border-slate-100 flex items-center gap-4 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <Truck className="w-5 h-5" />
+          <div className="bg-white rounded-2xl p-4 flex-1 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <Truck className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fleet Inventory</p>
+                <p className="text-xl font-black text-slate-800 leading-none">{vehicles.length} <span className="text-xs text-slate-400 font-bold ml-1">Active Assets</span></p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fleet Inventory</p>
-              <p className="text-xl font-black text-slate-800 leading-none">{vehicles.length} <span className="text-xs text-slate-400 font-bold ml-1">Active Assets</span></p>
-            </div>
-            <div className="ml-auto flex gap-4 pr-4">
-              <div className="text-right">
+            <div className="flex-1 flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto sm:ml-4 sm:pl-4 sm:border-l border-slate-100">
+              <div className="text-left">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Operational</p>
                 <p className="text-sm font-black text-emerald-600 leading-none">92.4%</p>
               </div>
-              <div className="text-right border-l pl-4 border-slate-100">
+              <div className="text-right sm:text-left sm:border-l sm:pl-4 border-slate-100">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Alerts</p>
                 <p className="text-sm font-black text-red-500 leading-none">4 Critical</p>
               </div>
             </div>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="h-10 px-4 bg-tech-blue text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all"
+              className="h-10 px-4 w-full sm:w-auto bg-tech-blue text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all"
             >
               <Plus className="w-4 h-4" /> Add Asset
             </button>
@@ -125,16 +132,18 @@ const VehiclesPage = () => {
         <div className="flex-1 flex gap-3 overflow-hidden min-h-0">
 
           {/* Left Panel: Vehicle List */}
-          <VehicleListPanel
-            vehicles={vehicles}
-            selectedVehicle={v}
-            onVehicleSelect={handleVehicleSelect}
-            searchQuery={searchQuery}
-            onSearch={setSearchQuery}
-          />
+          <div className={`${mobileView === 'list' ? 'flex' : 'hidden'} lg:flex w-full lg:w-auto flex-col min-w-0`}>
+            <VehicleListPanel
+              vehicles={vehicles}
+              selectedVehicle={v}
+              onVehicleSelect={handleVehicleSelect}
+              searchQuery={searchQuery}
+              onSearch={setSearchQuery}
+            />
+          </div>
 
           {/* Right Panel: Detailed Asset Information */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+          <div className={`${mobileView === 'detail' ? 'flex' : 'hidden'} lg:flex flex-1 overflow-y-auto custom-scrollbar pr-1`}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={v.id}
@@ -142,22 +151,34 @@ const VehiclesPage = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="pb-8"
+                className="pb-8 w-full"
               >
 
                 {/* HERO HEADER */}
-                <div className="relative rounded-[2rem] overflow-hidden mb-5 shadow-sm"
+                <div className="relative rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden mb-5 shadow-sm"
                   style={{ background: 'linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#3b82f6 100%)' }}>
                   <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full opacity-10 bg-white" />
                   <div className="absolute left-1/4 -bottom-10 w-40 h-40 rounded-full opacity-5 bg-white" />
 
-                  <div className="px-8 py-7 flex items-start gap-6">
-                    <div className="w-24 h-20 rounded-[1.5rem] overflow-hidden border-4 border-white/25 shadow-2xl shrink-0 relative bg-slate-800">
-                      <img src={v.photo || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=300"} alt="" className="w-full h-full object-cover" />
-                      <div className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border-4 border-[#2563eb] ${v.status === 'Moving' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                  <div className="px-6 lg:px-8 py-6 lg:py-7 flex flex-col lg:flex-row items-start lg:items-center gap-6">
+                    <div className="flex items-center gap-4 w-full lg:w-auto">
+                      <button 
+                        onClick={() => setMobileView('list')}
+                        className="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                      <div className="w-20 lg:w-24 h-16 lg:h-20 rounded-[1.2rem] lg:rounded-[1.5rem] overflow-hidden border-4 border-white/25 shadow-2xl shrink-0 relative bg-slate-800">
+                        <img src={v.photo || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=300"} alt="" className="w-full h-full object-cover" />
+                        <div className={`absolute bottom-0 right-0 w-4 lg:w-5 h-4 lg:h-5 rounded-full border-4 border-[#2563eb] ${v.status === 'Moving' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                      </div>
+                      <div className="lg:hidden flex-1 min-w-0">
+                        <h2 className="text-xl font-black text-white tracking-tight leading-none mb-1">{v.name}</h2>
+                        <p className="text-blue-100 text-[10px] font-bold uppercase tracking-wider">{v.plate}</p>
+                      </div>
                     </div>
 
-                    <div className="flex-1 min-w-0">
+                    <div className="hidden lg:block flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
                         <h2 className="text-2xl font-black text-white tracking-tight">{v.name}</h2>
                         <span className="text-blue-100/60 text-sm font-mono">{v.id}</span>
@@ -176,13 +197,13 @@ const VehiclesPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex gap-2 w-full lg:w-auto">
                       <button onClick={() => toast.success('Diagnostics triggerred')}
-                        className="px-4 py-2.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-xl text-xs font-bold text-white flex items-center gap-2 transition-all">
+                        className="flex-1 lg:flex-none px-4 py-2.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 transition-all">
                         <Wrench className="w-3.5 h-3.5" />Service
                       </button>
                       <button onClick={() => toast.success('Remote command sent')}
-                        className="px-4 py-2.5 bg-white rounded-xl text-xs font-bold text-blue-700 flex items-center gap-2 hover:bg-blue-50 transition-all shadow-lg">
+                        className="flex-1 lg:flex-none px-4 py-2.5 bg-white rounded-xl text-xs font-bold text-blue-700 flex items-center justify-center gap-2 hover:bg-blue-50 transition-all shadow-lg">
                         <Navigation className="w-3.5 h-3.5" />Route
                       </button>
                     </div>
@@ -190,7 +211,7 @@ const VehiclesPage = () => {
                 </div>
 
                 {/* QUICK STATS STRIP */}
-                <div className="grid grid-cols-5 gap-3 mb-5">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
                   {[
                     { label: 'Current Speed', value: `${v.speed ?? 0} kmh`, color: '#3B82F6' },
                     { label: 'Fuel Level', value: `${v.vitals?.fuel ?? 0}%`, color: fuelColor },
@@ -208,8 +229,8 @@ const VehiclesPage = () => {
                 {/* MAIN BODY GRID */}
                 <div className="grid grid-cols-12 gap-5">
                   {/* Health & Actions */}
-                  <div className="col-span-4 space-y-5">
-                    <motion.div {...fadeUp(0.12)} className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm flex flex-col items-center">
+                  <div className="col-span-12 lg:col-span-4 space-y-5 order-2 lg:order-1">
+                    <motion.div {...fadeUp(0.12)} className="bg-white rounded-[2rem] p-6 lg:p-7 border border-slate-100 shadow-sm flex flex-col items-center">
                       <SectionLabel>Asset Health Assessment</SectionLabel>
                       <div className="flex gap-8 mb-6 mt-2">
                         <Ring value={v.vitals?.fuel ?? 0} max={100} color={fuelColor} label="Fuel" />
@@ -233,14 +254,14 @@ const VehiclesPage = () => {
                       </div>
                     </motion.div>
 
-                    <motion.div {...fadeUp(0.16)} className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm">
+                    <motion.div {...fadeUp(0.16)} className="bg-white rounded-[2rem] p-6 lg:p-7 border border-slate-100 shadow-sm">
                       <SectionLabel>Fleet Actions</SectionLabel>
                       <div className="grid grid-cols-2 gap-2">
-                        <button onClick={() => toast.success('Shift assigned')} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-all border border-blue-100 text-blue-700 group">
+                        <button onClick={() => toast.success('Shift assigned')} className="flex flex-col items-center gap-1.5 p-3 lg:p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-all border border-blue-100 text-blue-700 group">
                           <Send className="w-4 h-4" />
                           <span className="text-[10px] font-bold">Dispatch</span>
                         </button>
-                        <button onClick={() => toast.success('System locked')} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-all border border-slate-100 text-slate-700">
+                        <button onClick={() => toast.success('System locked')} className="flex flex-col items-center gap-1.5 p-3 lg:p-4 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-all border border-slate-100 text-slate-700">
                           <Lock className="w-4 h-4" />
                           <span className="text-[10px] font-bold">Lock System</span>
                         </button>
@@ -249,14 +270,14 @@ const VehiclesPage = () => {
                   </div>
 
                   {/* Specifications & Activity */}
-                  <div className="col-span-8 space-y-5">
-                    <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-12 lg:col-span-8 space-y-5 order-1 lg:order-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {[
                         { label: 'Transmission', val: 'Direct i-Shift', icon: Activity, color: 'text-blue-500', bg: 'bg-blue-50' },
                         { label: 'Max Payload', val: '22,400 KG', icon: Shield, color: 'text-amber-500', bg: 'bg-amber-50' },
                         { label: 'Connection', val: 'Active · 5G', icon: Zap, color: 'text-emerald-500', bg: 'bg-emerald-50' }
                       ].map((item, i) => (
-                        <motion.div key={i} {...fadeUp(0.14 + i * 0.04)} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
+                        <motion.div key={i} {...fadeUp(0.14 + i * 0.04)} className="bg-white p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
                           <div className={`w-12 h-12 rounded-2xl ${item.bg} flex items-center justify-center shrink-0`}>
                             <item.icon className={`w-6 h-6 ${item.color}`} />
                           </div>
@@ -268,7 +289,7 @@ const VehiclesPage = () => {
                       ))}
                     </div>
 
-                    <motion.div {...fadeUp(0.22)} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex-1">
+                    <motion.div {...fadeUp(0.22)} className="bg-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 shadow-sm border border-slate-100 flex-1">
                       <div className="flex justify-between items-center mb-8">
                         <h3 className="text-lg font-black text-slate-800">Operational Log Feed</h3>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1 bg-slate-50 rounded-full">LATEST UPDATES</span>

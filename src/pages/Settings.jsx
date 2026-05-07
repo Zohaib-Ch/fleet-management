@@ -56,65 +56,65 @@ const SettingsPage = () => {
     <div className="flex flex-col h-screen w-screen bg-soft-bg overflow-hidden">
       <Navbar />
 
-      <main className="flex-1 flex flex-col gap-6 overflow-hidden p-4 pt-24">
+      <main className="flex-1 flex flex-col gap-6 overflow-hidden p-3 lg:p-4 pt-20 lg:pt-24">
 
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto pr-1 lg:pr-2 custom-scrollbar">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="max-w-4xl mx-auto pb-10"
           >
             {/* Header */}
-            <div className="flex items-center justify-between mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 lg:mb-10 gap-6 sm:gap-4">
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => navigate(-1)}
-                  className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-premium border border-white hover:bg-slate-50 transition-all"
+                  className="w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-xl lg:rounded-2xl flex items-center justify-center shadow-premium border border-white hover:bg-slate-50 transition-all shrink-0"
                 >
                   <ArrowLeft className="w-5 h-5 text-slate-500" />
                 </button>
                 <div>
-                  <h2 className="text-3xl font-bold text-tech-slate">Account Settings</h2>
-                  <p className="text-sm text-slate-400 font-medium">Manage your profile and platform preferences</p>
+                  <h2 className="text-2xl lg:text-3xl font-bold text-tech-slate">Account Settings</h2>
+                  <p className="text-[11px] lg:text-sm text-slate-400 font-medium leading-tight">Manage your profile and platform preferences</p>
                 </div>
               </div>
-              <button className="px-6 py-3 bg-blue-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-100 flex items-center gap-2 hover:bg-blue-700 transition-all">
+              <button className="w-full sm:w-auto px-6 py-3 lg:py-4 bg-blue-600 text-white rounded-xl lg:rounded-2xl text-[13px] lg:text-sm font-black uppercase tracking-widest shadow-lg shadow-blue-100 flex items-center justify-center gap-2 hover:bg-blue-700 transition-all">
                 <Save className="w-4 h-4" />
                 Save Changes
               </button>
             </div>
 
-            <div className="grid grid-cols-12 gap-8">
+            <div className="grid grid-cols-12 gap-6 lg:gap-8">
               {/* Left Side: Avatar & Quick Actions */}
-              <div className="col-span-4 space-y-6">
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-premium border border-white flex flex-col items-center text-center">
+              <div className="col-span-12 lg:col-span-4 space-y-6 order-2 lg:order-1">
+                <div className="bg-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 shadow-premium border border-white flex flex-col items-center text-center">
                   <div className="relative group">
-                    <div className="w-32 h-32 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white mb-6">
+                    <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-3xl lg:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white mb-6">
                       <img src={user?.photo || "https://i.pravatar.cc/150?u=nikolas"} alt="" className="w-full h-full object-cover" />
                     </div>
-                    <button className="absolute bottom-6 right-0 w-10 h-10 bg-blue-600 text-white rounded-xl shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                      <Camera className="w-5 h-5" />
+                    <button className="absolute bottom-6 right-0 w-8 h-8 lg:w-10 lg:h-10 bg-blue-600 text-white rounded-lg lg:rounded-xl shadow-lg flex items-center justify-center lg:opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                      <Camera className="w-4 h-4 lg:w-5 lg:h-5" />
                     </button>
                   </div>
-                  <h3 className="text-xl font-bold text-tech-slate mb-1">{user?.name || 'Nikolas G.'}</h3>
-                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-6">{user?.role?.name || 'Fleet Director'}</p>
+                  <h3 className="text-lg lg:text-xl font-bold text-tech-slate mb-1">{user?.name || 'Nikolas G.'}</h3>
+                  <p className="text-[9px] lg:text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-6">{user?.role?.name || 'Fleet Director'}</p>
 
                   <div className="w-full pt-6 border-t border-slate-50 space-y-3">
-                    <button className="w-full p-4 rounded-2xl bg-slate-50 text-slate-600 text-xs font-bold flex items-center gap-3 hover:bg-slate-100 transition-all">
+                    <button className="w-full p-4 rounded-xl lg:rounded-2xl bg-slate-50 text-slate-600 text-[11px] lg:text-xs font-bold flex items-center gap-3 hover:bg-slate-100 transition-all">
                       <Mail className="w-4 h-4 text-blue-500" />
                       Change Email
                     </button>
-                    <button className="w-full p-4 rounded-2xl bg-slate-50 text-slate-600 text-xs font-bold flex items-center gap-3 hover:bg-slate-100 transition-all">
+                    <button className="w-full p-4 rounded-xl lg:rounded-2xl bg-slate-50 text-slate-600 text-[11px] lg:text-xs font-bold flex items-center gap-3 hover:bg-slate-100 transition-all">
                       <Lock className="w-4 h-4 text-amber-500" />
                       Reset Password
                     </button>
                   </div>
                 </div>
 
-                <div className="bg-red-50 rounded-[2.5rem] p-8 border border-red-100">
+                <div className="bg-red-50 rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 border border-red-100">
                   <h4 className="text-sm font-bold text-red-600 mb-2">Danger Zone</h4>
-                  <p className="text-[11px] text-red-400 font-medium mb-6">Once you delete your account, there is no going back. Please be certain.</p>
-                  <button className="w-full py-4 rounded-2xl bg-white text-red-600 text-xs font-black uppercase tracking-widest shadow-sm hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2">
+                  <p className="text-[10px] lg:text-[11px] text-red-400 font-medium mb-6">Once you delete your account, there is no going back. Please be certain.</p>
+                  <button className="w-full py-4 rounded-xl lg:rounded-2xl bg-white text-red-600 text-[11px] lg:text-xs font-black uppercase tracking-widest shadow-sm hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2">
                     <Trash2 className="w-4 h-4" />
                     Delete Account
                   </button>
@@ -122,23 +122,23 @@ const SettingsPage = () => {
               </div>
 
               {/* Right Side: Detailed Settings */}
-              <div className="col-span-8 space-y-8">
+              <div className="col-span-12 lg:col-span-8 space-y-6 lg:space-y-8 order-1 lg:order-2">
                 {sections.map((section, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="bg-white rounded-[2.5rem] p-8 shadow-premium border border-white"
+                    className="bg-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 shadow-premium border border-white"
                   >
-                    <div className="flex items-center gap-4 mb-8">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${section.color}`}>
-                        <section.icon className="w-6 h-6" />
+                    <div className="flex items-center gap-4 mb-6 lg:mb-8">
+                      <div className={`w-10 h-10 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl flex items-center justify-center ${section.color}`}>
+                        <section.icon className="w-5 h-5 lg:w-6 lg:h-6" />
                       </div>
-                      <h3 className="text-xl font-bold text-tech-slate">{section.title}</h3>
+                      <h3 className="text-lg lg:text-xl font-bold text-tech-slate">{section.title}</h3>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3 lg:space-y-4">
                       {section.items.map((item, i) => (
                         <div
                           key={i}
@@ -146,32 +146,32 @@ const SettingsPage = () => {
                             if (item.type === 'toggle') toggleSetting(item.key)
                             if (item.type === 'theme-toggle') updateSetting('theme', item.current === 'dark' ? 'light' : 'dark')
                           }}
-                          className={`flex items-center justify-between p-5 rounded-2xl bg-slate-50/50 border border-white hover:bg-white hover:shadow-sm transition-all group ${item.type.includes('toggle') ? 'cursor-pointer' : ''}`}
+                          className={`flex items-center justify-between p-4 lg:p-5 rounded-xl lg:rounded-2xl bg-slate-50/50 border border-white hover:bg-white hover:shadow-sm transition-all group ${item.type.includes('toggle') ? 'cursor-pointer' : ''}`}
                         >
                           <div className="flex items-center gap-4">
                             {item.type === 'theme-toggle' && (
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.current === 'dark' ? 'bg-indigo-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
-                                {item.current === 'dark' ? <Moon className="w-5 h-5" /> : <Globe className="w-5 h-5" />}
+                              <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl flex items-center justify-center ${item.current === 'dark' ? 'bg-indigo-500 text-white' : 'bg-amber-100 text-amber-600'}`}>
+                                {item.current === 'dark' ? <Moon className="w-4 h-4 lg:w-5 lg:h-5" /> : <Globe className="w-4 h-4 lg:w-5 lg:h-5" />}
                               </div>
                             )}
                             <div>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
-                              <p className="text-sm font-bold text-tech-slate">{item.value}</p>
+                              <p className="text-[8px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
+                              <p className="text-[13px] lg:text-sm font-bold text-tech-slate">{item.value}</p>
                             </div>
                           </div>
 
                           {item.type === 'toggle' ? (
-                            <div className={`w-12 h-6 rounded-full p-1 transition-colors ${item.value ? 'bg-blue-600' : 'bg-slate-200'}`}>
+                            <div className={`w-10 h-5 lg:w-12 lg:h-6 rounded-full p-1 transition-colors ${item.value ? 'bg-blue-600' : 'bg-slate-200'}`}>
                               <motion.div
-                                animate={{ x: item.value ? 24 : 0 }}
-                                className="w-4 h-4 bg-white rounded-full shadow-sm"
+                                animate={{ x: item.value ? (window.innerWidth < 1024 ? 20 : 24) : 0 }}
+                                className="w-3 h-3 lg:w-4 lg:h-4 bg-white rounded-full shadow-sm"
                               />
                             </div>
                           ) : item.type === 'theme-toggle' ? (
-                            <div className={`w-12 h-6 rounded-full p-1 transition-colors ${item.current === 'dark' ? 'bg-indigo-600' : 'bg-amber-500'}`}>
+                            <div className={`w-10 h-5 lg:w-12 lg:h-6 rounded-full p-1 transition-colors ${item.current === 'dark' ? 'bg-indigo-600' : 'bg-amber-500'}`}>
                               <motion.div
-                                animate={{ x: item.current === 'dark' ? 24 : 0 }}
-                                className="w-4 h-4 bg-white rounded-full shadow-sm"
+                                animate={{ x: item.current === 'dark' ? (window.innerWidth < 1024 ? 20 : 24) : 0 }}
+                                className="w-3 h-3 lg:w-4 lg:h-4 bg-white rounded-full shadow-sm"
                               />
                             </div>
                           ) : (

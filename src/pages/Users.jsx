@@ -57,6 +57,7 @@ const UsersPage = () => {
   const [users, setUsers] = useState(mockUsers)
   const [searchQuery, setSearchQuery] = useState('')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [mobileView, setMobileView] = useState('list') // 'list' or 'profile'
 
   // Selection state - check URL for ?id=...
   const queryParams = new URLSearchParams(location.search)
@@ -69,12 +70,16 @@ const UsersPage = () => {
   useEffect(() => {
     if (queryId) {
       const user = users.find(u => u.id === queryId)
-      if (user) setSelectedUser(user)
+      if (user) {
+        setSelectedUser(user)
+        setMobileView('profile')
+      }
     }
   }, [queryId, users])
 
   const handleUserSelect = (user) => {
     setSelectedUser(user)
+    setMobileView('profile')
     navigate(`/users?id=${user.id}`, { replace: true })
   }
 
@@ -96,27 +101,29 @@ const UsersPage = () => {
 
         {/* Personnel Stats Bar */}
         <div className="flex gap-3 mb-1 shrink-0">
-          <div className="bg-white rounded-2xl p-4 flex-1 border border-slate-100 flex items-center gap-4 shadow-sm">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <Users className="w-5 h-5" />
+          <div className="bg-white rounded-2xl p-4 flex-1 border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fleet Personnel</p>
+                <p className="text-xl font-black text-slate-800 leading-none">{users.length} <span className="text-xs text-slate-400 font-bold ml-1">Team Members</span></p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Fleet Personnel</p>
-              <p className="text-xl font-black text-slate-800 leading-none">{users.length} <span className="text-xs text-slate-400 font-bold ml-1">Team Members</span></p>
-            </div>
-            <div className="ml-auto flex gap-4 pr-4">
-              <div className="text-right">
+            <div className="flex-1 flex items-center justify-between sm:justify-start gap-4 w-full sm:w-auto sm:ml-4 sm:pl-4 sm:border-l border-slate-100">
+              <div className="text-left">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Efficiency</p>
                 <p className="text-sm font-black text-emerald-600 leading-none">94.8%</p>
               </div>
-              <div className="text-right border-l pl-4 border-slate-100">
+              <div className="text-right sm:text-left sm:border-l sm:pl-4 border-slate-100">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Active Now</p>
                 <p className="text-sm font-black text-blue-600 leading-none">28 On-Shift</p>
               </div>
             </div>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="h-10 px-4 bg-tech-blue text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all"
+              className="h-10 px-4 w-full sm:w-auto bg-tech-blue text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all"
             >
               <UserPlus className="w-4 h-4" /> Add Member
             </button>
@@ -126,16 +133,18 @@ const UsersPage = () => {
         <div className="flex-1 flex gap-3 overflow-hidden min-h-0">
 
           {/* Left Panel: User List with Category Filter */}
-          <UserListPanel
-            users={users}
-            selectedUser={u}
-            onUserSelect={handleUserSelect}
-            searchQuery={searchQuery}
-            onSearch={setSearchQuery}
-          />
+          <div className={`${mobileView === 'list' ? 'flex' : 'hidden'} lg:flex w-full lg:w-auto flex-col min-w-0`}>
+            <UserListPanel
+              users={users}
+              selectedUser={u}
+              onUserSelect={handleUserSelect}
+              searchQuery={searchQuery}
+              onSearch={setSearchQuery}
+            />
+          </div>
 
           {/* Right Panel: Detailed Profile Information */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+          <div className={`${mobileView === 'profile' ? 'flex' : 'hidden'} lg:flex flex-1 overflow-y-auto custom-scrollbar pr-1`}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={u.id}
@@ -143,29 +152,41 @@ const UsersPage = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="pb-8"
+                className="pb-8 w-full"
               >
 
                 {/* HERO HEADER */}
-                <div className="relative rounded-[2rem] overflow-hidden mb-5 shadow-sm"
+                <div className="relative rounded-[1.5rem] lg:rounded-[2.5rem] overflow-hidden mb-5 shadow-sm"
                   style={{ background: 'linear-gradient(135deg,#1e40af 0%,#2563eb 55%,#3b82f6 100%)' }}>
                   <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full opacity-10 bg-white" />
                   <div className="absolute left-1/4 -bottom-10 w-40 h-40 rounded-full opacity-5 bg-white" />
 
-                  <div className="px-8 py-7 flex items-start gap-6">
-                    <div className="w-20 h-20 rounded-[2rem] overflow-hidden border-4 border-white/25 shadow-2xl shrink-0 relative">
-                      <img src={u.photo} alt="" className="w-full h-full object-cover" />
-                      <div className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border-4 border-[#2563eb] ${u.status === 'Active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                  <div className="px-6 lg:px-8 py-6 lg:py-7 flex flex-col lg:flex-row items-start lg:items-center gap-6">
+                    <div className="flex items-center gap-4 w-full lg:w-auto">
+                      <button 
+                        onClick={() => setMobileView('list')}
+                        className="lg:hidden w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white"
+                      >
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                      <div className="w-16 lg:w-20 h-16 lg:h-20 rounded-[1.2rem] lg:rounded-[2rem] overflow-hidden border-4 border-white/25 shadow-2xl shrink-0 relative">
+                        <img src={u.photo} alt="" className="w-full h-full object-cover" />
+                        <div className={`absolute bottom-0 right-0 w-4 lg:w-5 h-4 lg:h-5 rounded-full border-4 border-[#2563eb] ${u.status === 'Active' ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                      </div>
+                      <div className="lg:hidden flex-1 min-w-0">
+                        <h2 className="text-xl font-black text-white tracking-tight leading-none mb-1">{u.name}</h2>
+                        <p className="text-blue-100 text-[10px] font-bold uppercase tracking-wider">{u.role.name}</p>
+                      </div>
                     </div>
 
-                    <div className="flex-1 min-w-0">
+                    <div className="hidden lg:block flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-1">
                         <h2 className="text-2xl font-black text-white tracking-tight">{u.name}</h2>
                         <span className="text-blue-100/60 text-sm font-mono">{u.id}</span>
                       </div>
                       <p className="text-blue-100 text-sm font-bold uppercase tracking-wider">{u.role.name} &nbsp;·&nbsp; {u.department}</p>
 
-                      <div className="flex items-center gap-4 mt-3">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3">
                         <div className="flex items-center gap-1.5 text-blue-50">
                           <Mail className="w-3.5 h-3.5 opacity-70" />
                           <span className="text-xs font-medium">{u.email}</span>
@@ -181,13 +202,13 @@ const UsersPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex gap-2 w-full lg:w-auto">
                       <button onClick={() => toast.success('Profile permissions updated')}
-                        className="px-4 py-2.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-xl text-xs font-bold text-white flex items-center gap-2 transition-all">
+                        className="flex-1 lg:flex-none px-4 py-2.5 bg-white/15 hover:bg-white/25 border border-white/20 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 transition-all">
                         <Settings className="w-3.5 h-3.5" />Manage
                       </button>
                       <button onClick={() => toast.success('Message drafted')}
-                        className="px-4 py-2.5 bg-white rounded-xl text-xs font-bold text-blue-700 flex items-center gap-2 hover:bg-blue-50 transition-all shadow-lg">
+                        className="flex-1 lg:flex-none px-4 py-2.5 bg-white rounded-xl text-xs font-bold text-blue-700 flex items-center justify-center gap-2 hover:bg-blue-50 transition-all shadow-lg">
                         <MessageSquare className="w-3.5 h-3.5" />Message
                       </button>
                     </div>
@@ -195,7 +216,7 @@ const UsersPage = () => {
                 </div>
 
                 {/* QUICK STATS STRIP */}
-                <div className="grid grid-cols-5 gap-3 mb-5">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
                   {[
                     { label: 'Weekly Hours', value: `${u.weeklyHours}h`, color: '#3B82F6' },
                     { label: 'Alerts Cleared', value: u.alertsCleared, color: '#F59E0B' },
@@ -213,8 +234,8 @@ const UsersPage = () => {
                 {/* MAIN BODY GRID */}
                 <div className="grid grid-cols-12 gap-5">
                   {/* Performance & Actions */}
-                  <div className="col-span-4 space-y-5">
-                    <motion.div {...fadeUp(0.12)} className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm flex flex-col items-center">
+                  <div className="col-span-12 lg:col-span-4 space-y-5 order-2 lg:order-1">
+                    <motion.div {...fadeUp(0.12)} className="bg-white rounded-[2rem] p-6 lg:p-7 border border-slate-100 shadow-sm flex flex-col items-center">
                       <SectionLabel>Performance Assessment</SectionLabel>
                       <div className="flex gap-8 mb-6 mt-2">
                         <Ring value={u.performance} max={100} color={perfColor} label="Performance" />
@@ -238,14 +259,14 @@ const UsersPage = () => {
                       </div>
                     </motion.div>
 
-                    <motion.div {...fadeUp(0.16)} className="bg-white rounded-[2rem] p-6 border border-slate-100 shadow-sm">
+                    <motion.div {...fadeUp(0.16)} className="bg-white rounded-[2rem] p-6 lg:p-7 border border-slate-100 shadow-sm">
                       <SectionLabel>Professional Actions</SectionLabel>
                       <div className="grid grid-cols-2 gap-2">
-                        <button onClick={() => toast.success('Training assigned')} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-all border border-blue-100 text-blue-700 group">
+                        <button onClick={() => toast.success('Training assigned')} className="flex flex-col items-center gap-1.5 p-3 lg:p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-all border border-blue-100 text-blue-700 group">
                           <Star className="w-4 h-4 group-hover:fill-blue-500" />
                           <span className="text-[10px] font-bold">Assign Course</span>
                         </button>
-                        <button onClick={() => toast.success('Audit triggered')} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-purple-50 hover:bg-purple-100 transition-all border border-purple-100 text-purple-700">
+                        <button onClick={() => toast.success('Audit triggered')} className="flex flex-col items-center gap-1.5 p-3 lg:p-4 rounded-2xl bg-purple-50 hover:bg-purple-100 transition-all border border-purple-100 text-purple-700">
                           <UserCheck className="w-4 h-4" />
                           <span className="text-[10px] font-bold">Trigger Audit</span>
                         </button>
@@ -254,14 +275,14 @@ const UsersPage = () => {
                   </div>
 
                   {/* Experience & Timeline */}
-                  <div className="col-span-8 space-y-5">
-                    <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-12 lg:col-span-8 space-y-5 order-1 lg:order-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {[
                         { label: 'Work Experience', val: '4.8 Years', icon: Briefcase, color: 'text-blue-500', bg: 'bg-blue-50' },
                         { label: 'Achievements', val: '12 Badges', icon: Award, color: 'text-amber-500', bg: 'bg-amber-50' },
                         { label: 'Platform Rating', val: '4.9 / 5.0', icon: Star, color: 'text-emerald-500', bg: 'bg-emerald-50' }
                       ].map((item, i) => (
-                        <motion.div key={i} {...fadeUp(0.14 + i * 0.04)} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
+                        <motion.div key={i} {...fadeUp(0.14 + i * 0.04)} className="bg-white p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4">
                           <div className={`w-12 h-12 rounded-2xl ${item.bg} flex items-center justify-center shrink-0`}>
                             <item.icon className={`w-6 h-6 ${item.color}`} />
                           </div>
@@ -273,7 +294,7 @@ const UsersPage = () => {
                       ))}
                     </div>
 
-                    <motion.div {...fadeUp(0.22)} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex-1">
+                    <motion.div {...fadeUp(0.22)} className="bg-white rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 shadow-sm border border-slate-100 flex-1">
                       <div className="flex justify-between items-center mb-8">
                         <h3 className="text-lg font-black text-slate-800">Professional Activity Timeline</h3>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1 bg-slate-50 rounded-full">LATEST UPDATES</span>
