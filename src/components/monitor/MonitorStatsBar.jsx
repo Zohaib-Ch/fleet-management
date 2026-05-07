@@ -94,10 +94,10 @@ const MonitorStatsBar = ({ stats, showConfig, onToggleConfig, onToggleStat }) =>
             className="absolute right-0 top-[calc(100%+12px)] w-64 bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden z-[5000] p-3"
           >
             <div className="px-3 py-3 border-b border-slate-50 flex items-center justify-between mb-2">
-               <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest">KPI Modules</h4>
-               <button onClick={onToggleConfig} className="w-6 h-6 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all border border-slate-100">
-                  <X className="w-3.5 h-3.5" />
-               </button>
+              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest">KPI Modules</h4>
+              <button onClick={onToggleConfig} className="w-6 h-6 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all border border-slate-100">
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
 
             <div className="max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
@@ -107,9 +107,8 @@ const MonitorStatsBar = ({ stats, showConfig, onToggleConfig, onToggleStat }) =>
                   <button
                     key={stat.id}
                     onClick={() => onToggleStat(stat.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left group mb-1 border ${
-                      stat.visible ? 'bg-blue-50 border-blue-100' : 'bg-transparent border-transparent hover:bg-slate-50 hover:border-slate-100'
-                    }`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left group mb-1 border ${stat.visible ? 'bg-blue-50 border-blue-100' : 'bg-transparent border-transparent hover:bg-slate-50 hover:border-slate-100'
+                      }`}
                   >
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105"
                       style={{ background: stat.visible ? 'white' : `${stat.color}12` }}>

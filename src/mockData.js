@@ -188,7 +188,11 @@ export const mockMonitorStats = [
   { id: 'moving', label: 'On Road', value: mockVehicles.filter(v => v.status === 'Moving').length.toString(), sub: 'Moving Assets', icon: 'Activity', color: '#10B981', visible: true, trend: '+12%' },
   { id: 'efficiency', label: 'Efficiency', value: '94.2', unit: '%', sub: 'Fleet Score', icon: 'Zap', color: '#8B5CF6', visible: true, trend: '+2.1%' },
   { id: 'fuel', label: 'Fuel Usage', value: '32.4', unit: 'L/100', sub: 'Avg Consumption', icon: 'ClipboardCheck', color: '#6366F1', visible: true, trend: '-0.8%' },
+  { id: 'utilization', label: 'Utilization', value: '88.5', unit: '%', sub: 'Time in Motion', icon: 'TrendingUp', color: '#0EA5E9', visible: true, trend: '+3.4%' },
+  { id: 'co2', label: 'CO2 Footprint', value: '1.2', unit: 'Tons', sub: 'Total Emission', icon: 'Leaf', color: '#10B981', visible: true, trend: '-5.2%' },
+  { id: 'safety', label: 'Driver Safety', value: '9.4', unit: '/10', sub: 'Fleet Avg', icon: 'ShieldCheck', color: '#F43F5E', visible: true, trend: '+0.3%' },
   { id: 'maintenance', label: 'Service', value: mockVehicles.filter(v => v.status === 'Maintenance').length.toString(), sub: 'In Workshop', icon: 'Wrench', color: '#64748B', visible: true },
+  { id: 'renewals', label: 'Renewals', value: '2', sub: 'Insurance/Tax', icon: 'Calendar', color: '#F59E0B', visible: true },
   { id: 'resting', label: 'Resting', value: mockVehicles.filter(v => v.status === 'Resting').length.toString(), sub: 'Driver Break', icon: 'Coffee', color: '#F59E0B', visible: true },
   { id: 'alerts', label: 'Incidents', value: '3', sub: 'Critical Alerts', icon: 'AlertTriangle', color: '#EF4444', visible: true },
 ]

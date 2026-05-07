@@ -116,7 +116,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose, dragControls }) => {
       case 'driver_profile':
         return (
           <Reorder.Item key="driver_profile" value="driver_profile" className="mb-4">
-            <motion.div 
+            <motion.div
               onClick={() => navigate(`/profile/${v.driver.id}`)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -238,107 +238,107 @@ const MonitorDetailPanel = ({ vehicle: v, onClose, dragControls }) => {
       case 'fiscal_performance':
         return (
           <Reorder.Item key="fiscal_performance" value="fiscal_performance" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 overflow-hidden cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
-             <div className="flex items-center justify-between mb-6">
-                <div>
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fiscal Performance</p>
-                   <p className="text-xs font-bold text-slate-400 italic">Maintenance vs Fuel Costs (12mo)</p>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fiscal Performance</p>
+                <p className="text-xs font-bold text-slate-400 italic">Maintenance vs Fuel Costs (12mo)</p>
+              </div>
+              <div className="flex gap-4">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="text-[9px] font-black text-slate-500 uppercase">2024</span>
                 </div>
-                <div className="flex gap-4">
-                   <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-blue-500" />
-                      <span className="text-[9px] font-black text-slate-500 uppercase">2024</span>
-                   </div>
-                   <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-slate-200" />
-                      <span className="text-[9px] font-black text-slate-500 uppercase">2023</span>
-                   </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-slate-200" />
+                  <span className="text-[9px] font-black text-slate-500 uppercase">2023</span>
                 </div>
-             </div>
-             <div className="h-40 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                   <BarChart data={fiscalData}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                      <XAxis dataKey="m" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: '#94A3B8' }} />
-                      <Tooltip 
-                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
-                        itemStyle={{ fontSize: '10px', fontWeight: 900 }}
-                      />
-                      <Bar dataKey="prev" fill="#E2E8F0" radius={[2, 2, 0, 0]} />
-                      <Bar dataKey="current" fill="#3B82F6" radius={[2, 2, 0, 0]} />
-                   </BarChart>
-                </ResponsiveContainer>
-             </div>
+              </div>
+            </div>
+            <div className="h-40 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={fiscalData}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                  <XAxis dataKey="m" axisLine={false} tickLine={false} tick={{ fontSize: 9, fontWeight: 700, fill: '#94A3B8' }} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
+                    itemStyle={{ fontSize: '10px', fontWeight: 900 }}
+                  />
+                  <Bar dataKey="prev" fill="#E2E8F0" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey="current" fill="#3B82F6" radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </Reorder.Item>
         )
       case 'expense_distribution':
         return (
           <Reorder.Item key="expense_distribution" value="expense_distribution" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
-             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expense Allocation</p>
-             <div className="flex items-center gap-4">
-                <div className="w-44 h-44 shrink-0 relative">
-                   <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                         <Pie
-                           data={expenseCategories}
-                           cx="50%"
-                           cy="50%"
-                           innerRadius={45}
-                           outerRadius={65}
-                           paddingAngle={5}
-                           dataKey="value"
-                           stroke="none"
-                         >
-                            {expenseCategories.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                         </Pie>
-                         <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
-                      </PieChart>
-                   </ResponsiveContainer>
-                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                      <p className="text-xl font-black text-slate-800 leading-none">62%</p>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-1">Fuel</p>
-                   </div>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expense Allocation</p>
+            <div className="flex items-center gap-4">
+              <div className="w-44 h-44 shrink-0 relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={expenseCategories}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={65}
+                      paddingAngle={5}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {expenseCategories.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <p className="text-xl font-black text-slate-800 leading-none">62%</p>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-tighter mt-1">Fuel</p>
                 </div>
-                <div className="flex-1 space-y-3.5">
-                   {expenseCategories.map(cat => (
-                     <div key={cat.name} className="flex items-center justify-between group">
-                        <div className="flex items-center gap-2.5">
-                           <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: cat.color }} />
-                           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide group-hover:text-slate-800 transition-colors">{cat.name}</span>
-                        </div>
-                        <span className="text-[11px] font-black text-slate-800">{cat.value}%</span>
-                     </div>
-                   ))}
-                </div>
-             </div>
+              </div>
+              <div className="flex-1 space-y-3.5">
+                {expenseCategories.map(cat => (
+                  <div key={cat.name} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: cat.color }} />
+                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide group-hover:text-slate-800 transition-colors">{cat.name}</span>
+                    </div>
+                    <span className="text-[11px] font-black text-slate-800">{cat.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </Reorder.Item>
         )
       case 'quarterly_utilization':
         return (
           <Reorder.Item key="quarterly_utilization" value="quarterly_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
-             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Quarterly Operational Hours</p>
-             <div className="h-40 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                   <BarChart layout="vertical" data={quarterlyUtilization}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F1F5F9" />
-                      <XAxis type="number" hide />
-                      <YAxis dataKey="q" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#64748B' }} />
-                      <Tooltip cursor={{ fill: '#F8FAFC' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
-                      <Bar dataKey="drive" stackId="a" fill="#0369A1" radius={[0, 0, 0, 0]} barSize={20} />
-                      <Bar dataKey="idle" stackId="a" fill="#0EA5E9" />
-                      <Bar dataKey="park" stackId="a" fill="#7DD3FC" radius={[0, 4, 4, 0]} />
-                   </BarChart>
-                </ResponsiveContainer>
-             </div>
-             <div className="mt-4 flex gap-6 justify-center">
-                {[{ l: 'Driving', c: '#0369A1' }, { l: 'Idle', c: '#0EA5E9' }, { l: 'Parked', c: '#7DD3FC' }].map(i => (
-                  <div key={i.l} className="flex items-center gap-1.5">
-                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: i.c }} />
-                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{i.l}</span>
-                  </div>
-                ))}
-             </div>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Quarterly Operational Hours</p>
+            <div className="h-40 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart layout="vertical" data={quarterlyUtilization}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F1F5F9" />
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="q" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#64748B' }} />
+                  <Tooltip cursor={{ fill: '#F8FAFC' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
+                  <Bar dataKey="drive" stackId="a" fill="#0369A1" radius={[0, 0, 0, 0]} barSize={20} />
+                  <Bar dataKey="idle" stackId="a" fill="#0EA5E9" />
+                  <Bar dataKey="park" stackId="a" fill="#7DD3FC" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-4 flex gap-6 justify-center">
+              {[{ l: 'Driving', c: '#0369A1' }, { l: 'Idle', c: '#0EA5E9' }, { l: 'Parked', c: '#7DD3FC' }].map(i => (
+                <div key={i.l} className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: i.c }} />
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{i.l}</span>
+                </div>
+              ))}
+            </div>
           </Reorder.Item>
         )
       case 'mid_grid':
@@ -369,7 +369,7 @@ const MonitorDetailPanel = ({ vehicle: v, onClose, dragControls }) => {
     >
       <div className="px-8 pt-8 pb-4 flex items-center justify-between shrink-0 relative group/detail">
         {/* Dashboard Drag Handle */}
-        <div 
+        <div
           onPointerDown={(e) => dragControls?.start(e)}
           className="absolute top-3 left-1/2 -translate-x-1/2 z-50 p-1 opacity-0 group-hover/detail:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
         >
