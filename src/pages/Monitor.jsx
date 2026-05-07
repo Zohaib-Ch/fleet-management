@@ -24,7 +24,7 @@ const Monitor = () => {
   const [expandedGroups, setExpandedGroups] = useState(new Set(['grp-01']))
   const [activeGroupFilter, setActiveGroupFilter] = useState(null)
   const [focusedVehicle, setFocusedVehicle] = useState(null)
-  const [selectedVehicle, setSelectedVehicle] = useState(null)
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null)
 
   // Mobile tab state: 'map' | 'fleet'
   const [mobileTab, setMobileTab] = useState('map')
@@ -77,51 +77,50 @@ const Monitor = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLiveVehicles(prev => prev.map(v => {
-        if (v.status !== 'Moving') return v
-        const heading = ((v._heading || 0) + jitter(0, 15) + 360) % 360
-        const rad = (heading * Math.PI) / 180
-        const step = 0.0004
-        return {
-          ...v,
-          _heading: heading,
-          lat: Math.max(55.8, Math.min(56.5, v.lat + Math.cos(rad) * step)),
-          lng: Math.max(9.5, Math.min(10.18, v.lng + Math.sin(rad) * step)),
-          speed: Number(Math.max(28, Math.min(98, v.speed + jitter(0, 6))).toFixed(1)),
-        }
-      }))
-    }, 3500)
+      setLiveVehicles(prev => {
+        let changed = false
+        const next = prev.map(v => {
+          if (v.status !== 'Moving') return v
+          changed = true
+          const heading = ((v._heading || 0) + jitter(0, 15) + 360) % 360
+          const rad = (heading * Math.PI) / 180
+          const step = 0.0004
+          return {
+            ...v,
+            _heading: heading,
+            lat: Math.max(55.8, Math.min(56.5, v.lat + Math.cos(rad) * step)),
+            lng: Math.max(9.5, Math.min(10.18, v.lng + Math.sin(rad) * step)),
+            speed: Number(Math.max(28, Math.min(98, v.speed + jitter(0, 6))).toFixed(1)),
+          }
+        })
+        return changed ? next : prev
+      })
+    }, 5000)
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    if (selectedVehicle) {
-      const updated = liveVehicles.find(v => v.id === selectedVehicle.id)
-      if (updated) setSelectedVehicle(updated)
-    }
-  }, [liveVehicles])
+  const selectedVehicle = useMemo(() => 
+    selectedVehicleId ? liveVehicles.find(v => v.id === selectedVehicleId) : null
+  , [selectedVehicleId, liveVehicles])
 
   const handleSingleClick = useCallback((vehicle) => {
-    const live = liveVehicles.find(v => v.id === vehicle.id) || vehicle
-    setFocusedVehicle(live)
-    setSelectedVehicle(live)
-    // On mobile, switch to map view so the drawer overlays the map
+    setFocusedVehicle(vehicle)
+    setSelectedVehicleId(vehicle.id)
     if (window.innerWidth < 1024) {
       setMobileTab('map')
     }
-  }, [liveVehicles])
+  }, [])
 
   const handleDoubleClick = useCallback((vehicle) => {
-    const live = liveVehicles.find(v => v.id === vehicle.id) || vehicle
-    setSelectedVehicle(live)
-    setFocusedVehicle(live)
+    setSelectedVehicleId(vehicle.id)
+    setFocusedVehicle(vehicle)
     if (window.innerWidth < 1024) {
       setMobileTab('map')
     }
-  }, [liveVehicles])
+  }, [])
 
   const handleCloseDetail = useCallback(() => {
-    setSelectedVehicle(null)
+    setSelectedVehicleId(null)
     if (window.innerWidth < 1024) {
       setMobileTab('map')
     }

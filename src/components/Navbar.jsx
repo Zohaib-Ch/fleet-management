@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, Bell, Settings, LogOut, User, ChevronDown, ChevronRight,
@@ -22,19 +22,22 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10)
-    window.addEventListener('scroll', handleScroll)
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 10
+      setIsScrolled(prev => prev !== scrolled ? scrolled : prev)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navLinks = [
+  const navLinks = useMemo(() => [
     { name: 'Monitor', path: '/', icon: LayoutDashboard },
     { name: 'Analytics', path: '/analytics', icon: BarChart3 },
     { name: 'Fleet', path: '/vehicles', icon: Truck },
     { name: 'Personnel', path: '/users', icon: Users },
     { name: 'Maintenance', path: '/maintenance', icon: Wrench },
     { name: 'Reports', path: '/reports', icon: Sparkles },
-  ]
+  ], [])
 
   const notifications = [
     { id: 1, title: 'Speed Violation', body: 'Vehicle V-102 exceeded 110km/h on E45', time: '2m ago', type: 'critical', icon: AlertTriangle, color: 'text-red-500 bg-red-50' },
@@ -346,4 +349,4 @@ const Navbar = () => {
   )
 }
 
-export default Navbar
+export default React.memo(Navbar)

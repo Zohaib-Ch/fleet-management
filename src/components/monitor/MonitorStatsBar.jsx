@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Settings, X, Check, Truck, ParkingSquare, UserCheck, Coffee,
@@ -12,13 +12,12 @@ const ICON_MAP = {
   Activity, Zap, ShieldCheck
 }
 
-const StatCard = ({ stat }) => {
+const StatCard = React.memo(({ stat }) => {
   const Icon = ICON_MAP[stat.icon] || Truck
   const isPrimary = stat.id === 'active' || stat.id === 'moving'
 
   return (
     <motion.div
-      layout
       initial={{ opacity: 0, y: 5, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
@@ -55,10 +54,10 @@ const StatCard = ({ stat }) => {
       </div>
     </motion.div>
   )
-}
+})
 
-const MonitorStatsBar = ({ stats, showConfig, onToggleConfig, onToggleStat }) => {
-  const visible = stats.filter(s => s.visible)
+const MonitorStatsBar = React.memo(({ stats, showConfig, onToggleConfig, onToggleStat }) => {
+  const visible = useMemo(() => stats.filter(s => s.visible), [stats])
 
   return (
     <div className="relative flex items-center gap-4 py-1">
@@ -130,6 +129,6 @@ const MonitorStatsBar = ({ stats, showConfig, onToggleConfig, onToggleStat }) =>
       </AnimatePresence>
     </div>
   )
-}
+})
 
 export default MonitorStatsBar

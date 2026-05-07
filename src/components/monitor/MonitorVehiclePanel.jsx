@@ -12,14 +12,7 @@ const STATUS_CONFIG = {
   Maintenance: { color: '#EF4444', label: 'Service', bg: 'bg-red-500' },
 }
 
-const DRIVER_STATUS_STYLE = {
-  Driving: 'text-emerald-600 bg-emerald-50 border-emerald-100',
-  Loading: 'text-blue-600 bg-blue-50 border-blue-100',
-  Break: 'text-amber-600 bg-amber-50 border-amber-100',
-  Parked: 'text-slate-500 bg-slate-50 border-slate-100',
-}
-
-const VehicleRow = ({ vehicle, isFocused, isSelected, onSingleClick, onDoubleClick }) => {
+const VehicleRow = React.memo(({ vehicle, isFocused, isSelected, onSingleClick, onDoubleClick }) => {
   const status = STATUS_CONFIG[vehicle.status] || STATUS_CONFIG.Idle
 
   const VehicleIcon = useMemo(() => {
@@ -32,7 +25,6 @@ const VehicleRow = ({ vehicle, isFocused, isSelected, onSingleClick, onDoubleCli
 
   return (
     <motion.div
-      layout
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       onClick={() => onSingleClick(vehicle)}
@@ -99,11 +91,11 @@ const VehicleRow = ({ vehicle, isFocused, isSelected, onSingleClick, onDoubleCli
       </div>
     </motion.div>
   )
-}
+})
 
-const GroupRow = ({ group, vehicles, isExpanded, onToggle, focusedVehicle, selectedVehicle, onSingleClick, onDoubleClick, isActive, onGroupFilter }) => {
-  const groupVehicles = vehicles.filter(v => v.group === group.id)
-  const movingCount = groupVehicles.filter(v => v.status === 'Moving').length
+const GroupRow = React.memo(({ group, vehicles, isExpanded, onToggle, focusedVehicle, selectedVehicle, onSingleClick, onDoubleClick, isActive, onGroupFilter }) => {
+  const groupVehicles = useMemo(() => vehicles.filter(v => v.group === group.id), [vehicles, group.id])
+  const movingCount = useMemo(() => groupVehicles.filter(v => v.status === 'Moving').length, [groupVehicles])
 
   return (
     <div className="mb-2">
@@ -157,9 +149,9 @@ const GroupRow = ({ group, vehicles, isExpanded, onToggle, focusedVehicle, selec
       </AnimatePresence>
     </div>
   )
-}
+})
 
-const MonitorVehiclePanel = ({
+const MonitorVehiclePanel = React.memo(({
   vehicles, allVehicles, groups,
   searchQuery, onSearch,
   viewMode, onViewMode,
@@ -291,6 +283,6 @@ const MonitorVehiclePanel = ({
       </div>
     </div>
   )
-}
+})
 
 export default MonitorVehiclePanel

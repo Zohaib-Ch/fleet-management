@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, Reorder, AnimatePresence, useSpring, useTransform, animate } from 'framer-motion'
 import {
    X, Truck, MapPin, AlertTriangle, Wrench, Calendar, MousePointer2,
@@ -10,21 +10,33 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import toast from 'react-hot-toast'
 
 // ── Animated Number Counter ──────────────────────────────────────────────────
-const Counter = ({ value, duration = 1.5, suffix = "", keyId }) => {
-   const [count, setCount] = useState(0)
+const Counter = React.memo(({ value, duration = 1.5, suffix = "", keyId }) => {
+   const [count, setCount] = useState(value)
+   const prevValueRef = useRef(value)
+   const prevKeyIdRef = useRef(keyId)
+
    useEffect(() => {
-      setCount(0) // Reset for re-animation
-      const controls = animate(0, value, {
+      // If vehicle changed, jump to value or start from 0
+      if (prevKeyIdRef.current !== keyId) {
+         setCount(0)
+         prevValueRef.current = 0
+      }
+
+      const controls = animate(prevValueRef.current, value, {
          duration,
          onUpdate: (latest) => setCount(Math.floor(latest))
       })
+
+      prevValueRef.current = value
+      prevKeyIdRef.current = keyId
       return () => controls.stop()
-   }, [value, keyId]) // Re-trigger on value or vehicle change
+   }, [value, keyId, duration])
+
    return <span>{count}{suffix}</span>
-}
+})
 
 // ── UI Helpers ───────────────────────────────────────────────────────────────
-const LargeRing = ({ healthy, attention, critical, keyId }) => {
+const LargeRing = React.memo(({ healthy, attention, critical, keyId }) => {
    const total = healthy + attention + critical
    const r = 28, circ = 2 * Math.PI * r
    const hPct = healthy / total, aPct = attention / total, cPct = critical / total
@@ -52,9 +64,9 @@ const LargeRing = ({ healthy, attention, critical, keyId }) => {
          </div>
       </div>
    )
-}
+})
 
-const ProgressBar = ({ label, value, color = "bg-blue-500", icon: Icon, keyId }) => (
+const ProgressBar = React.memo(({ label, value, color = "bg-blue-500", icon: Icon, keyId }) => (
    <div className="space-y-1">
       <div className="flex justify-between items-center px-0.5">
          <div className="flex items-center gap-1">
@@ -67,7 +79,7 @@ const ProgressBar = ({ label, value, color = "bg-blue-500", icon: Icon, keyId })
          <motion.div key={keyId} initial={{ width: 0 }} animate={{ width: `${value}%` }} transition={{ duration: 1.5, ease: [0.34, 1.56, 0.64, 1] }} className={`h-full rounded-full ${color}`} />
       </div>
    </div>
-)
+))
 
 const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
    if (!v) return null;
@@ -75,10 +87,10 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
    const [moduleOrder, setModuleOrder] = useState(['hero_card', 'stats_strip', 'telemetry_grid', 'fiscal_performance', 'expense_distribution', 'quarterly_utilization', 'fuel_utilization', 'recent_trips', 'mid_grid'])
 
    // Advanced data mapping
-   const fuelData = [
+   const fuelData = useMemo(() => [
       { day: 'Mon', val: 92 }, { day: 'Tue', val: 85 }, { day: 'Wed', val: 70 },
       { day: 'Thu', val: 88 }, { day: 'Fri', val: 65 }, { day: 'Sat', val: 50 }, { day: 'Sun', val: 45 }
-   ].map(d => ({ ...d, val: d.val + (Math.random() * 10 - 5) }))
+   ].map(d => ({ ...d, val: d.val + (Math.random() * 10 - 5) })), [v.id])
 
    const tripData = [
       { id: 'T-102', from: 'København', to: 'Aarhus', time: '2h 15m', status: 'Completed', dist: '187km' },
@@ -340,4 +352,4 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
    )
 }
 
-export default MonitorDetailDrawer
+export default React.memo(MonitorDetailDrawer)

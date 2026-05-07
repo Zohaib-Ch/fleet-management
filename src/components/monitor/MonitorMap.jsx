@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useMemo, useState } from 'react'
+import React, { useEffect, useRef, useCallback, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-// ── Custom marker icon factory ────────────────────────────────────────────────
+// ── Custom marker icon factory with CACHE ─────────────────────────────────────
 const STATUS_HEX = {
   Moving: '#10B981',
   Resting: '#F59E0B',
@@ -10,7 +10,13 @@ const STATUS_HEX = {
   Maintenance: '#EF4444',
 }
 
-const createMarkerIcon = (status, isFocused, isSelected, type) => {
+// Icon cache to avoid re-creating DOM strings for identical states
+const iconCache = new Map()
+
+const getMarkerIcon = (status, isFocused, isSelected, type) => {
+  const key = `${status}-${isFocused}-${isSelected}-${type || 'Truck'}`
+  if (iconCache.has(key)) return iconCache.get(key)
+
   const color = STATUS_HEX[status] || '#94A3B8'
   const ring = isSelected ? `box-shadow:0 0 0 3px ${color}40,0 0 0 6px ${color}20;` : ''
   const scale = isFocused || isSelected ? 'transform:scale(1.3);' : ''
@@ -37,7 +43,7 @@ const createMarkerIcon = (status, isFocused, isSelected, type) => {
     `
   }
 
-  return L.divIcon({
+  const icon = L.divIcon({
     className: '',
     html: `
       <div style="position:relative;display:flex;align-items:center;justify-content:center;${scale}transition:transform .2s">
@@ -59,6 +65,9 @@ const createMarkerIcon = (status, isFocused, isSelected, type) => {
     iconSize: [30, 30],
     iconAnchor: [15, 15],
   })
+
+  iconCache.set(key, icon)
+  return icon
 }
 
 const VehicleTooltipContent = ({ v }) => `
@@ -76,6 +85,7 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
   const mapRef = useRef(null)
   const [map, setMap] = useState(null)
   const markersRef = useRef({})
+  const markerStateRef = useRef({}) // Track icon state to avoid unnecessary setIcon calls
   const center = [56.1629, 10.2039]
 
   // Initialize Map
@@ -104,14 +114,16 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
       instance.remove()
       setMap(null)
       markersRef.current = {}
+      markerStateRef.current = {}
     }
   }, []) // Initialize once
 
-  // Sync Markers
+  // Sync Markers — optimized: only update icon when state actually changes
   useEffect(() => {
     if (!map) return
 
     const newMarkers = {}
+    const newStates = {}
 
     vehicles.slice(0, 120).forEach(v => {
       // Skip vehicles with invalid coordinates
@@ -119,13 +131,18 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
 
       const isFocused = focusedVehicle?.id === v.id
       const isSelected = selectedVehicle?.id === v.id
-      const icon = createMarkerIcon(v.status, isFocused, isSelected, v.type)
+      const stateKey = `${v.status}-${isFocused}-${isSelected}-${v.type || 'Truck'}`
 
       let marker = markersRef.current[v.id]
       if (marker) {
+        // Only update position (cheap)
         marker.setLatLng([v.lat, v.lng])
-        marker.setIcon(icon)
+        // Only update icon if state changed (expensive)
+        if (markerStateRef.current[v.id] !== stateKey) {
+          marker.setIcon(getMarkerIcon(v.status, isFocused, isSelected, v.type))
+        }
       } else {
+        const icon = getMarkerIcon(v.status, isFocused, isSelected, v.type)
         marker = L.marker([v.lat, v.lng], { icon })
           .on('click', () => onSingleClick(v))
           .on('dblclick', () => onDoubleClick(v))
@@ -141,6 +158,7 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
           .addTo(map)
       }
       newMarkers[v.id] = marker
+      newStates[v.id] = stateKey
     })
 
     // Remove old markers
@@ -151,6 +169,7 @@ const MonitorMap = React.memo(({ vehicles, focusedVehicle, selectedVehicle, onSi
     })
 
     markersRef.current = newMarkers
+    markerStateRef.current = newStates
   }, [map, vehicles, focusedVehicle, selectedVehicle, onSingleClick, onDoubleClick])
 
   // Sync Focus Pan
