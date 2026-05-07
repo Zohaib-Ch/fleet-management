@@ -1,8 +1,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { 
-  User, Bell, Shield, Globe, Moon, CreditCard, 
-  ChevronRight, Camera, Mail, Phone, Lock, 
+import {
+  User, Bell, Shield, Globe, Moon, CreditCard,
+  ChevronRight, Camera, Mail, Phone, Lock,
   Trash2, LogOut, ArrowLeft, Save
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -33,11 +33,11 @@ const SettingsPage = () => {
       items: [
         { label: 'Email Notifications', value: settings.showActionRequired, type: 'toggle', key: 'showActionRequired' },
         { label: 'Map Hover Cards', value: settings.enableHoverCards, type: 'toggle', key: 'enableHoverCards' },
-        { 
-          label: 'System Theme', 
-          value: settings.theme === 'dark' ? 'Dark Mode' : 'Light Mode', 
+        {
+          label: 'System Theme',
+          value: settings.theme === 'dark' ? 'Dark Mode' : 'Light Mode',
           type: 'theme-toggle',
-          current: settings.theme 
+          current: settings.theme
         },
       ]
     },
@@ -55,11 +55,11 @@ const SettingsPage = () => {
   return (
     <div className="flex flex-col h-screen w-screen bg-soft-bg overflow-hidden">
       <Navbar />
-      
+
       <main className="flex-1 flex flex-col gap-6 overflow-hidden p-4 pt-24">
-        
+
         <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="max-w-4xl mx-auto pb-10"
@@ -67,7 +67,7 @@ const SettingsPage = () => {
             {/* Header */}
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-4">
-                <button 
+                <button
                   onClick={() => navigate(-1)}
                   className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-premium border border-white hover:bg-slate-50 transition-all"
                 >
@@ -98,7 +98,7 @@ const SettingsPage = () => {
                   </div>
                   <h3 className="text-xl font-bold text-tech-slate mb-1">{user?.name || 'Nikolas G.'}</h3>
                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-6">{user?.role?.name || 'Fleet Director'}</p>
-                  
+
                   <div className="w-full pt-6 border-t border-slate-50 space-y-3">
                     <button className="w-full p-4 rounded-2xl bg-slate-50 text-slate-600 text-xs font-bold flex items-center gap-3 hover:bg-slate-100 transition-all">
                       <Mail className="w-4 h-4 text-blue-500" />
@@ -124,7 +124,7 @@ const SettingsPage = () => {
               {/* Right Side: Detailed Settings */}
               <div className="col-span-8 space-y-8">
                 {sections.map((section, idx) => (
-                  <motion.div 
+                  <motion.div
                     key={idx}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -140,8 +140,8 @@ const SettingsPage = () => {
 
                     <div className="space-y-4">
                       {section.items.map((item, i) => (
-                        <div 
-                          key={i} 
+                        <div
+                          key={i}
                           onClick={() => {
                             if (item.type === 'toggle') toggleSetting(item.key)
                             if (item.type === 'theme-toggle') updateSetting('theme', item.current === 'dark' ? 'light' : 'dark')
@@ -159,19 +159,19 @@ const SettingsPage = () => {
                               <p className="text-sm font-bold text-tech-slate">{item.value}</p>
                             </div>
                           </div>
-                          
+
                           {item.type === 'toggle' ? (
                             <div className={`w-12 h-6 rounded-full p-1 transition-colors ${item.value ? 'bg-blue-600' : 'bg-slate-200'}`}>
-                              <motion.div 
+                              <motion.div
                                 animate={{ x: item.value ? 24 : 0 }}
-                                className="w-4 h-4 bg-white rounded-full shadow-sm" 
+                                className="w-4 h-4 bg-white rounded-full shadow-sm"
                               />
                             </div>
                           ) : item.type === 'theme-toggle' ? (
                             <div className={`w-12 h-6 rounded-full p-1 transition-colors ${item.current === 'dark' ? 'bg-indigo-600' : 'bg-amber-500'}`}>
-                              <motion.div 
+                              <motion.div
                                 animate={{ x: item.current === 'dark' ? 24 : 0 }}
-                                className="w-4 h-4 bg-white rounded-full shadow-sm" 
+                                className="w-4 h-4 bg-white rounded-full shadow-sm"
                               />
                             </div>
                           ) : (

@@ -134,9 +134,9 @@ const Monitor = () => {
 
   return (
     <div className={`flex flex-col h-screen w-screen overflow-hidden bg-[#F0F4F8] relative font-sans transition-all duration-500`}>
-      <Navbar />
+      {!isFullscreen && <Navbar />}
 
-      <main className={`flex-1 flex flex-col overflow-hidden min-w-0 transition-all duration-500 pt-24 ${isFullscreen ? 'p-0 gap-0' : 'p-3 gap-2'}`}>
+      <main className={`flex-1 flex flex-col overflow-hidden min-w-0 transition-all duration-500 ${isFullscreen ? 'pt-0 p-0 gap-0' : 'pt-24 p-3 gap-2'}`}>
         {!isFullscreen && (
           <MonitorStatsBar stats={stats} showConfig={showStatsConfig} onToggleConfig={() => setShowStatsConfig(p => !p)} onToggleStat={toggleStat} />
         )}
