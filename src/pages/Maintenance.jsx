@@ -7,8 +7,7 @@ import {
   ShieldCheck, Zap, Gauge, Thermometer,
   User, Star, MapPin, DollarSign, Send, ArrowUpRight, Box, Layers
 } from 'lucide-react'
-import Sidebar from '../components/Sidebar'
-import TopBar from '../components/TopBar'
+import Navbar from '../components/Navbar'
 import AddTicketModal from '../components/AddTicketModal'
 import AuditLogsModal from '../components/AuditLogsModal'
 import toast from 'react-hot-toast'
@@ -74,11 +73,10 @@ const MaintenancePage = () => {
   }, [searchQuery, tickets])
 
   return (
-    <div className="flex h-screen w-screen bg-[#F8FAFC] overflow-hidden">
-      <Sidebar activeTab="Maintenance" setActiveTab={() => {}} />
+    <div className="flex flex-col h-screen w-screen bg-[#F8FAFC] overflow-hidden">
+      <Navbar />
       
-      <main className="flex-1 flex flex-col gap-3 overflow-hidden p-3">
-        <TopBar />
+      <main className="flex-1 flex flex-col gap-3 overflow-hidden p-3 pt-24">
         
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-10 space-y-4">
           

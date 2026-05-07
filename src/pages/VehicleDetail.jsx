@@ -3,8 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, MapPin, Phone, Mail, Activity, Truck, Fuel, Gauge, Thermometer, ShieldCheck, Wrench, Zap, Info, Bell, TrendingUp, Clock, AlertTriangle, Send, Lock, Flag, Navigation } from 'lucide-react'
 import { mockVehicles } from '../mockData'
-import Sidebar from '../components/Sidebar'
-import TopBar from '../components/TopBar'
+import Navbar from '../components/Navbar'
 import toast from 'react-hot-toast'
 
 const fadeUp = (d = 0) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4, delay: d, ease: [0.22, 1, 0.36, 1] } })
@@ -48,10 +47,9 @@ const VehicleDetail = () => {
   const overallC = overall >= 80 ? '#10B981' : overall >= 60 ? '#F59E0B' : '#EF4444'
 
   return (
-    <div className="flex h-screen w-screen bg-[#F0F4F8] overflow-hidden">
-      <Sidebar activeTab="Vehicles" setActiveTab={() => {}} />
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 gap-2">
-        <TopBar />
+    <div className="flex flex-col h-screen w-screen bg-[#F0F4F8] overflow-hidden">
+      <Navbar />
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 pt-24 gap-2">
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
 
           {/* ── HERO HEADER ── */}

@@ -9,8 +9,7 @@ import {
   Users, UserPlus, BarChart3
 } from 'lucide-react'
 import { mockUsers } from '../mockData'
-import Sidebar from '../components/Sidebar'
-import TopBar from '../components/TopBar'
+import Navbar from '../components/Navbar'
 import UserListPanel from '../components/users/UserListPanel'
 import toast from 'react-hot-toast'
 
@@ -74,11 +73,10 @@ const UserProfile = () => {
   const complianceColor = u.compliance === 'Compliant' ? '#10B981' : '#EF4444'
 
   return (
-    <div className="flex h-screen w-screen bg-[#F0F4F8] overflow-hidden">
-      <Sidebar activeTab="Users" setActiveTab={() => {}} />
+    <div className="flex flex-col h-screen w-screen bg-[#F0F4F8] overflow-hidden">
+      <Navbar />
       
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 gap-2">
-        <TopBar />
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 pt-24 gap-2">
         
         {/* Personnel Stats Bar */}
         <div className="flex gap-3 mb-1">

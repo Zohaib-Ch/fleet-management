@@ -27,6 +27,7 @@ export const SettingsProvider = ({ children }) => {
       dashboardOrder: ['kpis', 'workspace', 'vehicles'],
       analyticsRange: '30D',
       monitorViewMode: 'all',
+      activeSector: 'General',
       monitorStatsVisibility: {
         active: true,
         moving: true,

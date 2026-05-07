@@ -9,8 +9,7 @@ import {
   Search, Shield, Battery, MoreVertical
 } from 'lucide-react'
 import { mockVehicles, addVehicle } from '../mockData'
-import Sidebar from '../components/Sidebar'
-import TopBar from '../components/TopBar'
+import Navbar from '../components/Navbar'
 import VehicleListPanel from '../components/vehicles/VehicleListPanel'
 import AddVehicleModal from '../components/AddVehicleModal'
 import toast from 'react-hot-toast'
@@ -89,11 +88,10 @@ const VehiclesPage = () => {
   const batteryColor = battery < 30 ? '#EF4444' : '#10B981'
 
   return (
-    <div className="flex h-screen w-screen bg-[#F0F4F8] overflow-hidden">
-      <Sidebar activeTab="Vehicles" setActiveTab={() => { }} />
+    <div className="flex flex-col h-screen w-screen bg-[#F0F4F8] overflow-hidden">
+      <Navbar />
 
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 gap-2">
-        <TopBar />
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 pt-24 gap-2">
 
         {/* Asset Stats Bar */}
         <div className="flex gap-3 mb-1 shrink-0">

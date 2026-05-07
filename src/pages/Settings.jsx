@@ -8,8 +8,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useSettings } from '../context/SettingsContext'
-import Sidebar from '../components/Sidebar'
-import TopBar from '../components/TopBar'
+import Navbar from '../components/Navbar'
 
 const SettingsPage = () => {
   const navigate = useNavigate()
@@ -54,11 +53,10 @@ const SettingsPage = () => {
   ]
 
   return (
-    <div className="flex h-screen w-screen bg-soft-bg overflow-hidden">
-      <Sidebar activeTab="Settings" setActiveTab={() => {}} />
+    <div className="flex flex-col h-screen w-screen bg-soft-bg overflow-hidden">
+      <Navbar />
       
-      <main className="flex-1 flex flex-col gap-6 overflow-hidden p-4">
-        <TopBar />
+      <main className="flex-1 flex flex-col gap-6 overflow-hidden p-4 pt-24">
         
         <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
           <motion.div 

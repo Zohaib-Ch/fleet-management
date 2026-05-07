@@ -29,9 +29,9 @@ const LargeRing = ({ healthy, attention, critical, keyId }) => {
    const r = 32, circ = 2 * Math.PI * r
    const hPct = healthy / total, aPct = attention / total, cPct = critical / total
    return (
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-4">
          <div className="relative flex items-center justify-center shrink-0">
-            <svg width="84" height="84" viewBox="0 0 100 100">
+            <svg width="72" height="72" viewBox="0 0 100 100">
                <circle cx="50" cy="50" r={r} fill="none" stroke="#F1F5F9" strokeWidth="8" />
                <motion.circle key={`h-${keyId}`} cx="50" cy="50" r={r} fill="none" stroke="#10B981" strokeWidth="8" initial={{ strokeDashoffset: circ }} animate={{ strokeDashoffset: circ * (1 - hPct) }} strokeDasharray={circ} transition={{ duration: 1.5, ease: 'backOut' }} transform="rotate(-90 50 50)" />
                <motion.circle key={`a-${keyId}`} cx="50" cy="50" r={r} fill="none" stroke="#F59E0B" strokeWidth="8" initial={{ strokeDashoffset: circ }} animate={{ strokeDashoffset: circ * (1 - aPct) }} strokeDasharray={circ} transition={{ duration: 1.5, delay: 0.2, ease: 'backOut' }} strokeDashoffset={-circ * hPct} transform="rotate(-90 50 50)" />
@@ -113,10 +113,10 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
       switch (id) {
          case 'hero_card':
             return (
-               <Reorder.Item key="hero_card" value="hero_card" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm relative group/hero mb-4">
+               <Reorder.Item key="hero_card" value="hero_card" className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm relative group/hero mb-3">
                   <GripVertical className="absolute top-4 right-4 w-3 h-3 text-slate-100 opacity-0 group-hover/hero:opacity-100 cursor-grab transition-opacity" />
-                  <div className="flex items-start gap-6">
-                     <motion.div key={v.id} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="w-32 h-24 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shrink-0 shadow-sm">
+                  <div className="flex items-start gap-4">
+                     <motion.div key={v.id} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="w-28 h-20 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 shrink-0 shadow-sm">
                         <img src={v.photo || "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&q=80&w=300"} alt="" className="w-full h-full object-cover" />
                      </motion.div>
                      <div className="flex-1 min-w-0 pt-1">
@@ -138,14 +138,14 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'stats_strip':
             return (
-               <Reorder.Item key="stats_strip" value="stats_strip" className="grid grid-cols-4 gap-3 mb-4">
+               <Reorder.Item key="stats_strip" value="stats_strip" className="grid grid-cols-4 gap-2 mb-3">
                   {[
                      { l: 'Odometer', v: v.odometer || 0, s: 'km' },
                      { l: 'Efficiency', v: 92, s: '%' },
                      { l: 'Fuel Level', v: v.vitals?.fuel || 0, s: '%' },
                      { l: 'Engine Load', v: v.vitals?.engineLoad || 0, s: '%' }
                   ].map(s => (
-                     <div key={s.l} className="bg-white border border-slate-100 rounded-2xl p-3 shadow-sm flex flex-col items-center justify-center min-h-[70px]">
+                     <div key={s.l} className="bg-white border border-slate-100 rounded-2xl p-2.5 shadow-sm flex flex-col items-center justify-center min-h-[64px]">
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-tight mb-1.5 whitespace-nowrap">{s.l}</p>
                         <p className="text-lg font-black text-slate-800"><Counter value={s.v} suffix={s.s} keyId={v.id} /></p>
                      </div>
@@ -154,8 +154,8 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'telemetry_grid':
             return (
-               <Reorder.Item key="telemetry_grid" value="telemetry_grid" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
-                  <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+               <Reorder.Item key="telemetry_grid" value="telemetry_grid" className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm mb-3">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                      <ProgressBar label="Engine Health" value={88} color="bg-emerald-500" icon={Zap} keyId={v.id} />
                      <ProgressBar label="Tire Pressure" value={95} color="bg-blue-500" icon={Droplets} keyId={v.id} />
                      <ProgressBar label="Battery Life" value={76} color="bg-indigo-500" icon={RefreshCw} keyId={v.id} />
@@ -165,12 +165,12 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'fuel_utilization':
             return (
-               <Reorder.Item key="fuel_utilization" value="fuel_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
-                  <div className="flex items-center justify-between mb-4">
+               <Reorder.Item key="fuel_utilization" value="fuel_utilization" className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm mb-3">
+                  <div className="flex items-center justify-between mb-3">
                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Weekly Utilization</p>
                      <Fuel className="w-4 h-4 text-blue-500" />
                   </div>
-                  <div className="h-28 w-full">
+                  <div className="h-24 w-full">
                      <ResponsiveContainer width="100%" height="100%">
                         <BarChart key={v.id} data={fuelData}>
                            <Bar dataKey="val" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={1500} animationBegin={200}>
@@ -185,9 +185,9 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'recent_trips':
             return (
-               <Reorder.Item key="recent_trips" value="recent_trips" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Recent Trips</p>
-                  <div className="space-y-4">
+               <Reorder.Item key="recent_trips" value="recent_trips" className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm mb-3">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Recent Trips</p>
+                  <div className="space-y-3">
                      {tripData.map((trip, i) => (
                         <motion.div key={`${v.id}-${i}`} initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: i * 0.1 }} className="flex items-center gap-4 group/trip">
                            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover/trip:bg-blue-50 group-hover/trip:text-blue-500 transition-all">
@@ -207,11 +207,11 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'fiscal_performance':
             return (
-               <Reorder.Item key="fiscal_performance" value="fiscal_performance" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4 overflow-hidden">
-                  <div className="flex items-center justify-between mb-6">
+               <Reorder.Item key="fiscal_performance" value="fiscal_performance" className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm mb-3 overflow-hidden">
+                  <div className="flex items-center justify-between mb-4">
                      <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Fiscal Performance</p>
-                        <p className="text-xs font-bold text-slate-400 italic">Maintenance vs Fuel Costs (12mo)</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Fiscal Performance</p>
+                        <p className="text-[10px] font-bold text-slate-400 italic">Maintenance vs Fuel Costs (12mo)</p>
                      </div>
                      <div className="flex gap-4">
                         <div className="flex items-center gap-1.5">
@@ -224,7 +224,7 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
                         </div>
                      </div>
                   </div>
-                  <div className="h-40 w-full">
+                  <div className="h-32 w-full">
                      <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={fiscalData}>
                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
@@ -242,10 +242,10 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'expense_distribution':
             return (
-               <Reorder.Item key="expense_distribution" value="expense_distribution" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Expense Allocation</p>
+               <Reorder.Item key="expense_distribution" value="expense_distribution" className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm mb-3">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Expense Allocation</p>
                   <div className="flex items-center gap-4">
-                     <div className="w-44 h-44 shrink-0 relative">
+                     <div className="w-36 h-36 shrink-0 relative">
                         <ResponsiveContainer width="100%" height="100%">
                            <PieChart>
                               <Pie
@@ -286,9 +286,9 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'quarterly_utilization':
             return (
-               <Reorder.Item key="quarterly_utilization" value="quarterly_utilization" className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-4">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Quarterly Operational Hours</p>
-                  <div className="h-40 w-full">
+               <Reorder.Item key="quarterly_utilization" value="quarterly_utilization" className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm mb-3">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Quarterly Operational Hours</p>
+                  <div className="h-32 w-full">
                      <ResponsiveContainer width="100%" height="100%">
                         <BarChart layout="vertical" data={quarterlyUtilization}>
                            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F1F5F9" />
@@ -313,14 +313,14 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
             )
          case 'mid_grid':
             return (
-               <Reorder.Item key="mid_grid" value="mid_grid" className="grid grid-cols-3 gap-4 mb-4">
-                  <motion.div key={`serv-${v.id}`} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="col-span-1 bg-white border border-slate-100 rounded-3xl p-5 shadow-sm flex flex-col justify-center text-center">
-                     <Clock className="w-5 h-5 text-indigo-500 mx-auto mb-2" />
-                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Service Due</p>
-                     <p className="text-lg font-black text-slate-800">12d</p>
+               <Reorder.Item key="mid_grid" value="mid_grid" className="grid grid-cols-3 gap-3 mb-3">
+                  <motion.div key={`serv-${v.id}`} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }} className="col-span-1 bg-white border border-slate-100 rounded-3xl p-4 shadow-sm flex flex-col justify-center text-center">
+                     <Clock className="w-4 h-4 text-indigo-500 mx-auto mb-1.5" />
+                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Service Due</p>
+                     <p className="text-base font-black text-slate-800">12d</p>
                   </motion.div>
-                  <div className="col-span-2 bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex flex-col justify-center">
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Flådesundhed</p>
+                  <div className="col-span-2 bg-white border border-slate-100 rounded-3xl p-5 shadow-sm flex flex-col justify-center">
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Flådesundhed</p>
                      <LargeRing healthy={96} attention={24} critical={8} keyId={v.id} />
                   </div>
                </Reorder.Item>
@@ -332,18 +332,18 @@ const MonitorDetailDrawer = ({ vehicle: v, onClose }) => {
    return (
       <motion.div
          initial={{ width: 0, opacity: 0 }}
-         animate={{ width: 480, opacity: 1 }}
+         animate={{ width: 420, opacity: 1 }}
          exit={{ width: 0, opacity: 0 }}
          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
          className="shrink-0 flex flex-col bg-soft-bg rounded-[2.5rem] shadow-premium border-l border-white/50 overflow-hidden h-full max-h-screen relative z-10"
       >
-         <div className="px-8 pt-8 pb-4 flex items-center justify-between shrink-0">
+         <div className="px-6 pt-6 pb-3 flex items-center justify-between shrink-0">
             <h1 className="text-[11px] font-black text-slate-800 uppercase tracking-[0.2em]">Driftsoversigt</h1>
             <button onClick={onClose} className="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-red-500 transition-all duration-300">
                <X className="w-4 h-4" />
             </button>
          </div>
-         <div className="flex-1 overflow-y-auto custom-scrollbar px-8 pb-8">
+         <div className="flex-1 overflow-y-auto custom-scrollbar px-6 pb-6">
             <Reorder.Group axis="y" values={moduleOrder} onReorder={setModuleOrder} className="space-y-0">
                {moduleOrder.map(id => renderModule(id))}
             </Reorder.Group>

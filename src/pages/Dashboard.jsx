@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import Sidebar from '../components/Sidebar'
-import TopBar from '../components/TopBar'
+import Navbar from '../components/Navbar'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell, LineChart, Line, Legend
@@ -65,11 +64,10 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#F8FAFC] overflow-hidden">
-      <Sidebar activeTab="Analytics" setActiveTab={() => { }} />
+    <div className="flex flex-col h-screen w-screen bg-[#F8FAFC] overflow-hidden">
+      <Navbar />
 
-      <main className="flex-1 flex flex-col gap-3 overflow-hidden p-3">
-        <TopBar />
+      <main className="flex-1 flex flex-col gap-3 overflow-hidden p-3 pt-24">
 
         <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-10 space-y-4">
 

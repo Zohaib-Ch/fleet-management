@@ -13,8 +13,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   BarChart, Bar, PieChart as RePieChart, Pie, Cell, LineChart, Line 
 } from 'recharts'
-import Sidebar from '../components/Sidebar'
-import TopBar from '../components/TopBar'
+import Navbar from '../components/Navbar'
 import { mockVehicles, mockChartData, mockUsers } from '../mockData'
 import toast from 'react-hot-toast'
 import * as docx from 'docx'
@@ -761,11 +760,10 @@ const ReportsPage = () => {
   const SectionLabel = ({ children }) => <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">{children}</p>
 
   return (
-    <div className="flex h-screen w-screen bg-[#F8FAFC] overflow-hidden">
-      <Sidebar activeTab="Reports" setActiveTab={() => {}} />
+    <div className="flex flex-col h-screen w-screen bg-[#F8FAFC] overflow-hidden">
+      <Navbar />
       
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 gap-3">
-        <TopBar />
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 p-3 pt-24 gap-3">
 
         <div className="flex-1 flex gap-3 overflow-hidden min-h-0">
           
