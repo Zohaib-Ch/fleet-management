@@ -120,7 +120,7 @@ const VehicleListPanel = ({ vehicles, selectedVehicle, onVehicleSelect, searchQu
   }
 
   return (
-    <div className="w-[300px] shrink-0 flex flex-col bg-white/40 backdrop-blur-2xl rounded-[2rem] shadow-premium border border-white overflow-hidden h-full">
+    <div className="w-full lg:w-[300px] shrink-0 flex flex-col bg-white/40 backdrop-blur-2xl rounded-[2rem] shadow-premium border border-white overflow-hidden h-full">
       
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
