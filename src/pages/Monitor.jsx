@@ -149,10 +149,10 @@ const Monitor = () => {
   }), [liveVehicles, searchQuery, activeGroupFilter, statusFilters, settings.activeSector])
 
   return (
-    <div className={`flex flex-col h-screen w-screen overflow-hidden bg-[#F0F4F8] relative font-sans transition-all duration-500`}>
+    <div className={`flex flex-col h-[100dvh] w-screen overflow-hidden bg-[#F0F4F8] relative font-sans transition-all duration-500`}>
       {!isFullscreen && <Navbar />}
 
-      <main className={`flex-1 flex flex-col overflow-hidden min-w-0 transition-all duration-500 ${isFullscreen ? 'pt-0 p-0 gap-0' : 'pt-20 lg:pt-24 p-2 lg:p-3 gap-2'}`}>
+      <main className={`flex-1 flex flex-col overflow-hidden min-w-0 transition-all duration-500 ${isFullscreen ? 'pt-0 p-0 gap-0' : 'pt-16 lg:pt-24 p-2 lg:p-3 gap-2'}`}>
         {/* Stats Bar - scrollable on mobile */}
         {!isFullscreen && (
           <div className="shrink-0">
@@ -340,14 +340,14 @@ const Monitor = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={handleCloseDetail}
-                    className="absolute inset-0 bg-black/20 backdrop-blur-[2px] z-[100] rounded-2xl"
+                    className="absolute inset-0 bg-black/40 backdrop-blur-[4px] z-[1999] rounded-2xl"
                   />
                   <motion.div
                     initial={{ y: '100%' }}
                     animate={{ y: 0 }}
                     exit={{ y: '100%' }}
                     transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-                    className="absolute inset-x-0 bottom-0 top-[60px] z-[101] bg-soft-bg rounded-t-[2rem] shadow-2xl border-t border-white/50 overflow-hidden flex flex-col"
+                    className="absolute inset-x-0 bottom-0 top-[40px] z-[2000] bg-soft-bg rounded-t-[2.5rem] shadow-2xl border-t border-white/50 overflow-hidden flex flex-col"
                   >
                     {/* Drawer Handle */}
                     <div className="flex justify-center pt-3 pb-1 shrink-0">
@@ -372,8 +372,8 @@ const Monitor = () => {
           </div>
 
           {/* Mobile Bottom Tab Bar */}
-          <div className="shrink-0 pt-2 pb-1">
-            <div className="flex items-center bg-white/80 backdrop-blur-xl rounded-2xl shadow-premium border border-white/50 p-1.5 gap-1">
+          <div className="shrink-0 pt-2 pb-[env(safe-area-inset-bottom,0.75rem)]">
+            <div className="flex items-center bg-white/90 backdrop-blur-xl rounded-2xl shadow-premium border border-white/50 p-1.5 gap-1 mx-2">
               {[
                 { id: 'map', label: 'Map', icon: MapPin },
                 { id: 'fleet', label: 'Fleet', icon: List },
