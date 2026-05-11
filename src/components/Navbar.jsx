@@ -305,11 +305,11 @@ const Navbar = () => {
               className="xl:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[4999]"
             />
             <motion.div
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="xl:hidden absolute top-20 left-4 right-4 bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl border border-white/50 overflow-hidden z-[5000] p-6"
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="xl:hidden absolute top-[72px] left-4 right-4 bg-white/95 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white/50 overflow-hidden z-[5000] p-5 will-change-transform will-change-opacity"
             >
               <div className="mb-6 pb-6 border-b border-slate-100">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Mission Intelligence</p>
@@ -317,9 +317,8 @@ const Navbar = () => {
                   {navLinks.map((link, idx) => (
                     <motion.button
                       key={link.name}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.05 }}
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
                       onClick={() => { navigate(link.path); setIsMobileMenuOpen(false) }}
                       className={`flex flex-col items-start gap-3 p-5 rounded-3xl border transition-all ${isActive(link.path) ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-slate-50/50 border-slate-100 text-slate-600 hover:bg-white'}`}
                     >

@@ -32,7 +32,7 @@ const Ring = ({ value, max = 100, size = 120, color = '#10B981', label, sublabel
   return (
     <div className="flex flex-col items-center">
       <div className="relative flex items-center justify-center">
-        <svg width={size} height={size} viewBox="0 0 120 120">
+        <svg width={size} height={size} viewBox="0 0 120 120" className="transition-all duration-500">
           <circle cx="60" cy="60" r={r} fill="none" stroke="#F8FAFC" strokeWidth="8" />
           <motion.circle cx="60" cy="60" r={r} fill="none" stroke={color} strokeWidth="8" strokeLinecap="round"
             strokeDasharray={circ} transform="rotate(-90 60 60)"
@@ -40,8 +40,8 @@ const Ring = ({ value, max = 100, size = 120, color = '#10B981', label, sublabel
             transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }} />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className="text-2xl font-black text-slate-800 leading-none">{value}</p>
-          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{sublabel}</p>
+          <p className="text-xl lg:text-2xl font-black text-slate-800 leading-none">{value}</p>
+          <p className="text-[8px] lg:text-[9px] font-bold text-slate-400 uppercase tracking-tighter mt-1">{sublabel}</p>
         </div>
       </div>
       {label && <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-3">{label}</p>}
@@ -580,14 +580,14 @@ const ReportsPage = () => {
 
   const renderStatusSummary = () => (
     <div className="space-y-6">
-       <motion.div {...fadeUp()} className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
+       <motion.div {...fadeUp()} className="bg-white rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-10 border border-slate-100 shadow-sm">
           <SectionLabel>Vehicle Status Summary</SectionLabel>
-          <p className="text-sm text-slate-400 font-medium mb-10">Lists the time vehicles have spent in different statuses over the selected period.</p>
-          <div className="grid grid-cols-12 gap-10 items-center">
-             <div className="col-span-4 flex justify-center">
-                <Ring value={48} max={48} size={160} sublabel="VEHICLES" color="#10B981" />
+          <p className="text-xs lg:text-sm text-slate-400 font-medium mb-8 lg:mb-10">Lists the time vehicles have spent in different statuses over the selected period.</p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+             <div className="lg:col-span-4 flex justify-center">
+                <Ring value={48} max={48} size={150} sublabel="VEHICLES" color="#10B981" />
              </div>
-             <div className="col-span-8 space-y-8">
+             <div className="lg:col-span-8 space-y-6 lg:space-y-8">
                 <ProgressBar label="Active" value={34} max={48} color="#10B981" subtext="71% Distribution" />
                 <ProgressBar label="In Shop" value={8} max={48} color="#F59E0B" subtext="17% Distribution" />
                 <ProgressBar label="Out of Service" value={5} max={48} color="#EF4444" subtext="10% Distribution" />
