@@ -58,10 +58,10 @@ const Navbar = () => {
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform duration-500">
               <Truck className="w-5 h-5 text-white" />
             </div>
-            <div className="hidden lg:block relative">
-              <div className="flex items-center gap-1.5 overflow-hidden">
+            <div className="relative">
+              <div className="flex items-center gap-1 overflow-hidden">
                 <motion.h1
-                  className="text-sm font-black text-slate-800 tracking-tighter leading-none flex"
+                  className="text-xs lg:text-sm font-black text-slate-800 tracking-tighter leading-none flex"
                   initial="initial"
                   animate="animate"
                 >
@@ -72,22 +72,36 @@ const Navbar = () => {
                         initial: { y: 20, opacity: 0 },
                         animate: { y: 0, opacity: 1 }
                       }}
-                      transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                     >
                       {char}
                     </motion.span>
                   ))}
                   <motion.span
-                    className="ml-1 bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-shimmer"
-                    initial={{ opacity: 0, x: -10 }}
+                    className="ml-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 bg-clip-text text-transparent bg-[length:200%_auto]"
+                    animate={{ 
+                       backgroundPosition: ["0% center", "200% center"] 
+                    }}
+                    transition={{ 
+                       duration: 4, 
+                       repeat: Infinity, 
+                       ease: "linear" 
+                    }}
+                    initial={{ opacity: 0, x: -5 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: 0.6 }}
                   >
                     CLOUD
                   </motion.span>
                 </motion.h1>
               </div>
-              <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 leading-none">Intelligence Ops</p>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="text-[7px] lg:text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5 leading-none"
+              >
+                Intelligence Ops
+              </motion.p>
             </div>
           </Link>
 
