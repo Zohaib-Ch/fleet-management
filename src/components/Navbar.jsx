@@ -49,8 +49,8 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-[5000] transition-all duration-500 px-4 py-3 ${isScrolled ? 'top-2' : 'top-0'}`}>
-      <div className={`max-w-[1800px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-[2.5rem] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/50 dark:border-white/5 px-8 py-3' : 'bg-transparent px-2 py-4'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-[5000] transition-all duration-500 px-2 lg:px-4 py-2 lg:py-3 ${isScrolled ? 'top-1 lg:top-2' : 'top-0'}`}>
+      <div className={`max-w-[1800px] mx-auto transition-all duration-500 ${isScrolled ? 'rounded-2xl lg:rounded-[2.5rem] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/50 dark:border-white/5 px-4 lg:px-8 py-2 lg:py-3' : 'bg-transparent px-2 py-3 lg:py-4'}`}>
         <div className="flex items-center justify-between gap-8">
 
           {/* Logo Section */}

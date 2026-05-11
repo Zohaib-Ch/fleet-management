@@ -152,7 +152,7 @@ const Monitor = () => {
     <div className={`flex flex-col h-[100dvh] w-screen overflow-hidden bg-[#F0F4F8] relative font-sans transition-all duration-500`}>
       {!isFullscreen && <Navbar />}
 
-      <main className={`flex-1 flex flex-col overflow-hidden min-w-0 transition-all duration-500 ${isFullscreen ? 'pt-0 p-0 gap-0' : 'pt-16 lg:pt-24 p-2 lg:p-3 gap-2'}`}>
+      <main className={`flex-1 flex flex-col overflow-hidden min-w-0 transition-all duration-500 ${isFullscreen ? 'pt-0 p-0 gap-0' : 'pt-[76px] lg:pt-24 p-2 lg:p-3 gap-2'}`}>
         {/* Stats Bar - scrollable on mobile */}
         {!isFullscreen && (
           <div className="shrink-0">
