@@ -95,65 +95,67 @@ const MonitorStatsBar = React.memo(({ stats, showConfig, onToggleConfig, onToggl
   const visible = useMemo(() => stats.filter(s => s.visible), [stats])
 
   return (
-    <div className="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar no-scrollbar">
-      {/* Configuration Toggle */}
-      <button
-        onClick={onToggleConfig}
-        className="shrink-0 w-11 h-11 lg:w-12 lg:h-12 bg-white rounded-2xl lg:rounded-[1.5rem] flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all border border-slate-100 shadow-sm relative"
-      >
-        <Settings className={`w-5 h-5 transition-transform duration-700 ${showConfig ? 'rotate-90 text-blue-600' : ''}`} />
-        {showConfig && <div className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full" />}
-      </button>
+    <div className="relative">
+      <div className="flex items-center gap-3 overflow-x-auto pb-2 custom-scrollbar no-scrollbar">
+        {/* Configuration Toggle */}
+        <button
+          onClick={onToggleConfig}
+          className="shrink-0 w-11 h-11 lg:w-12 lg:h-12 bg-white rounded-2xl lg:rounded-[1.5rem] flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all border border-slate-100 shadow-sm relative"
+        >
+          <Settings className={`w-5 h-5 transition-transform duration-700 ${showConfig ? 'rotate-90 text-blue-600' : ''}`} />
+          {showConfig && <div className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full" />}
+        </button>
 
-      {/* KPI Stream */}
-      <div className="flex-1 flex items-center gap-2 lg:gap-3">
-        <AnimatePresence mode="popLayout">
-          {visible.map(stat => (
-             <div key={stat.id}>
-                {/* Desktop View */}
-                <div className="hidden lg:block">
-                   <StatCard stat={stat} />
-                </div>
-                {/* Mobile View */}
-                <div className="block lg:hidden">
-                   <MobileStatCard stat={stat} />
-                </div>
-             </div>
-          ))}
-        </AnimatePresence>
+        {/* KPI Stream */}
+        <div className="flex-1 flex items-center gap-2 lg:gap-3">
+          <AnimatePresence mode="popLayout">
+            {visible.map(stat => (
+               <div key={stat.id}>
+                  {/* Desktop View */}
+                  <div className="hidden lg:block">
+                     <StatCard stat={stat} />
+                  </div>
+                  {/* Mobile View */}
+                  <div className="block lg:hidden">
+                     <MobileStatCard stat={stat} />
+                  </div>
+               </div>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Visual Configuration Overlay */}
+      {/* Visual Configuration Overlay - Now properly positioned */}
       <AnimatePresence>
         {showConfig && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="absolute top-0 right-0 z-[100] h-full flex items-center gap-2 bg-white/90 backdrop-blur-md pl-4 pr-2 rounded-2xl border-l border-slate-100 shadow-premium"
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            className="absolute inset-0 z-[100] flex items-center bg-white/95 backdrop-blur-xl rounded-2xl border border-blue-100 shadow-premium px-4"
           >
-            <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mr-4">Configure Board</div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex-1 flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+              <div className="shrink-0 text-[10px] font-black text-slate-400 uppercase tracking-widest mr-2 hidden sm:block">Visibility</div>
               {stats.map(s => (
                 <button
                   key={s.id}
                   onClick={() => onToggleStat(s.id)}
-                  className={`px-3 py-1.5 rounded-xl text-[9px] font-black transition-all border ${
+                  className={`shrink-0 px-3 py-1.5 rounded-xl text-[9px] font-black transition-all border ${
                     s.visible
-                      ? 'bg-blue-600 text-white border-blue-500 shadow-lg'
-                      : 'bg-white text-slate-400 border-slate-100'
+                      ? 'bg-blue-600 text-white border-blue-500 shadow-md'
+                      : 'bg-white text-slate-400 border-slate-100 hover:border-blue-200'
                   }`}
                 >
                   {s.label}
                 </button>
               ))}
-              <button
-                onClick={onToggleConfig}
-                className="ml-2 w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 hover:text-red-500 transition-all"
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
+            <button
+              onClick={onToggleConfig}
+              className="ml-3 shrink-0 w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all border border-slate-100"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
